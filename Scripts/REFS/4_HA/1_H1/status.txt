@@ -1,0 +1,7 @@
+200	H1_parnas_n200_swCladeOnly.fna
+50	H1_parnas_n50_swCladeOnly.fna
+small	NA
+swine200	H1_parnas_swine_n200.fna
+swine50	H1_parnas_swine_n50.fna
+swineSmall	NA
+pickle	H1_parnas_swine_n800_simp.aln.classify.pickle

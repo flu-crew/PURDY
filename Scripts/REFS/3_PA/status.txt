@@ -1,0 +1,6 @@
+200	PA_parnas_n200.fna
+50	PA_parnas_n50.fna
+small	NA
+swine200	PA_parnas_swine_n200.fna
+swine50	PA_parnas_swine_n50.fna
+swineSmall	NA

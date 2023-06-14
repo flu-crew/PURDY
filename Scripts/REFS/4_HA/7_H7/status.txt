@@ -1,0 +1,6 @@
+200	H7_parnas_n200.fna
+50	H7_parnas_n50.fna
+small	NA
+swine200	NA
+swine50	NA
+swineSmall	h7_swine_v2_lenFilt_noSdups.fna

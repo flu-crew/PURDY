@@ -1,0 +1,6 @@
+200	H2_parnas_n200.fna
+50	H2_parnas_n50.fna
+small	NA
+swine200	NA
+swine50	NA
+swineSmall	NA

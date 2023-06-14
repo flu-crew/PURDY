@@ -1,0 +1,6 @@
+200	N9_parnas_n200.fna
+50	N9_parnas_n50.fna
+small	NA
+swine200	NA
+swine50	NA
+swineSmall	n9_swine_clean.fna
