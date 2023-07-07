@@ -46,10 +46,15 @@ RUN wget https://cran.r-project.org/src/base/R-4/R-4.2.0.tar.gz && \
 
 
 #Copy over custom variant of IRMA
-COPY ./irma_tka ./irma_tka
-RUN chmod -R 777 /irma_tka
-ENV PATH="${PATH}:/irma_tka"
+#COPY ./irma_tka ./irma_tka
+#RUN chmod -R 777 /irma_tka
+#ENV PATH="${PATH}:/irma_tka"
 
+#Install IRMA
+RUN wget https://wonder.cdc.gov/amd/flu/irma/flu-amd-202209.zip
+RUN unzip flu-amd-202209.zip
+RUN sed -i 's/TMP=\/tmp/TMP="$(pwd)"/g' flu-amd/IRMA_RES/modules/FLU/init.sh 
+ENV PATH="${PATH}:/flu-amd"
 
 #install classlog
 RUN pip3 install click scikit-learn numpy pandas 
@@ -66,5 +71,9 @@ RUN git clone https://github.com/flu-crew/classLog.git && \
   cd ..
 
 #installing PURDY
-COPY ./purdy_0.8.6 ./purdy_0.8.6
+COPY ./purdy ./purdy
 COPY ./REFS ./REFS
+ENV PATH="${PATH}:/"
+
+#setting up the file to run upon the call "docker run ..."
+ENTRYPOINT ["purdy"]
