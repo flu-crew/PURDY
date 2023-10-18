@@ -170,7 +170,7 @@ fi
 FAILED_IRMA="ERROR: IRMA assembly failed!"
 cd "$DEM_DIR"
 if [ $SKIP_IRMA -eq 0 ]; then
-    echo -e "running IRMA\n"
+    echo -e "Assembling genomes using IRMA\n"
     for DIR in barcode*; do #move through barcode* folders
         cd "$DIR" || {
         echo -e >&2 "\nERROR: There seem to be no barcode folders in your demultiplexing directory, $DEM_DIR"
@@ -193,7 +193,7 @@ if [ $SKIP_IRMA -eq 0 ]; then
 
             if [ $NUM_FASTQS == 1 ]; then
                 FILE="$(ls *fastq)"
-                IRMA FLU-minion "$FILE" "$IRMA_SAMP_NAME" || {
+                IRMA FLU-minion "$FILE" "$IRMA_SAMP_NAME" 2>/dev/null || {
                 echo >&2 "$FAILED_IRMA"
                 exit 1
                 }
@@ -202,7 +202,7 @@ if [ $SKIP_IRMA -eq 0 ]; then
                     rm allSeqs.fastq
                 fi
                 cat *fastq > allSeqs.fastq
-                IRMA FLU-minion allSeqs.fastq "$IRMA_SAMP_NAME" || {
+                IRMA FLU-minion allSeqs.fastq "$IRMA_SAMP_NAME" 2>/dev/null || {
                 echo >&2 "$FAILED_IRMA"
 	        exit 1
                 }
@@ -212,6 +212,7 @@ if [ $SKIP_IRMA -eq 0 ]; then
 
         cd ..
     done
+
 else
     echo -e "Skipping IRMA assembly\n"
 fi

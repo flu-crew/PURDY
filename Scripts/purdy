@@ -10,7 +10,7 @@
 PURDY_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 #PURDY's version
-VERSION="0.8.6"
+VERSION="0.9.1"
 
 
 ##### Define functions #####
@@ -40,6 +40,8 @@ function print_help_menu() {
              and skip QC statistic calculations, 'm' = skip MAFFT assembly
               and FastTree ML tree construction, and 's' = skip swine clade 
              prediction. These options may be combined. Default is 0.
+
+        --version : prints the version number
 
 helpChunk
     exit 1
@@ -114,7 +116,7 @@ while getopts ":i:o:t:a:s:-:h" opt; do
                 SKIP_HOSTPRED=1
             fi
             if [[ $OPTARG == *"s"* ]]; then
-                SKIP_CLADEPRED=0
+                SKIP_CLADEPRED=1
             fi
         fi
         ;;
@@ -168,7 +170,7 @@ fi
 FAILED_IRMA="ERROR: IRMA assembly failed!"
 cd "$DEM_DIR"
 if [ $SKIP_IRMA -eq 0 ]; then
-    echo -e "running IRMA\n"
+    echo -e "Assembling genomes using IRMA\n"
     for DIR in barcode*; do #move through barcode* folders
         cd "$DIR" || {
         echo -e >&2 "\nERROR: There seem to be no barcode folders in your demultiplexing directory, $DEM_DIR"
@@ -191,7 +193,7 @@ if [ $SKIP_IRMA -eq 0 ]; then
 
             if [ $NUM_FASTQS == 1 ]; then
                 FILE="$(ls *fastq)"
-                IRMA FLU-minion "$FILE" "$IRMA_SAMP_NAME" || {
+                IRMA FLU-minion "$FILE" "$IRMA_SAMP_NAME" 2>/dev/null || {
                 echo >&2 "$FAILED_IRMA"
                 exit 1
                 }
@@ -200,7 +202,7 @@ if [ $SKIP_IRMA -eq 0 ]; then
                     rm allSeqs.fastq
                 fi
                 cat *fastq > allSeqs.fastq
-                IRMA FLU-minion allSeqs.fastq "$IRMA_SAMP_NAME" || {
+                IRMA FLU-minion allSeqs.fastq "$IRMA_SAMP_NAME" 2>/dev/null || {
                 echo >&2 "$FAILED_IRMA"
 	        exit 1
                 }
@@ -210,6 +212,7 @@ if [ $SKIP_IRMA -eq 0 ]; then
 
         cd ..
     done
+
 else
     echo -e "Skipping IRMA assembly\n"
 fi
@@ -272,7 +275,7 @@ if [ $SKIP_COMBINE -eq 0  ]; then
     segs=()
     for dir in barcode*; do
         cd $dir
-        if [ -d "${IRMA_SAMP_NAME}/tables" ]; then
+        if [ -d "${IRMA_SAMP_NAME}/tables" ] && compgen -G "${IRMA_SAMP_NAME}/tables/*coverage.txt" > /dev/null; then
             cd $IRMA_SAMP_NAME
             for file in *fasta; do
                 seg="${file/.fasta/}"
@@ -312,26 +315,30 @@ if [ $SKIP_COMBINE -eq 0  ]; then
         barcode_number=`basename "$full_dir"`
 
         ###reset variables for barcodes without all segments
-        total=""; mean=""; seg=""; min=""; q1=""; med=""; q3=""; max=""
-        if [ -d "${IRMA_SAMP_NAME}/tables" ]; then
+        #total=""; 
+        mean=0; seg=""; min=0; q1=0; med=0; q3=0; max=0
+        ####If coverage files don't exist for this barcode do nothing
+        if [ -d "${IRMA_SAMP_NAME}/tables" ] && compgen -G "${IRMA_SAMP_NAME}/tables/*coverage.txt" > /dev/null; then
             cd "${IRMA_SAMP_NAME}/tables"
             ####for each coverage file add to an asociative array of key: segment  
             ####  val: c(min,q1,med,q3,max)
             unset segCov                                                             #reset the associative array
             declare -A segCov
+
+	    ####  Otherwise use coverage files to calculate all statistics
             for file in *-coverage.txt
             do
                 #####Mean calculcation
-                total=$(cut -f 3 $file | tail -n +2 | paste -sd+ - | bc)             #the sum of all coverage values
-                (( cnt = $(wc -l $file | cut -f 1 -d ' ') - 1 ))                     #the number of coverage values
-                mean=$(echo "scale=2; $total/$cnt" | bc | awk '{print int($1+0.5)}') #The mean of coverage values
+                #total=$(cut -f 3 $file | tail -n +2 | paste -sd+ - | bc)             #the sum of all coverage values
+                #(( cnt = $(wc -l $file | cut -f 1 -d ' ') - 1 ))                     #the number of coverage values
+                mean=$(tail -n +2 $file | awk '{sum += $3} END {print sum / NR}')    #The mean of coverage values
                 seg="${file/-coverage.txt/}"
 
                 #####remove header and sort data for other calculations
                 file2="coverageData_tmp.txt"
                 fileFirst="coverageData_tmp_first.txt"
                 fileLast="coverageData_tmp_last.txt"
-                (tail -n+2  $file | cut -f 3 | sort -n > $file2)   
+                (tail -n +2  $file | cut -f 3 | sort -n > $file2)   
  
                 #####calculate min and max
                 min=$(head -n 1 $file2)
@@ -345,7 +352,7 @@ if [ $SKIP_COMBINE -eq 0  ]; then
                     ######median
                     EvenMedian $numVals $file2
                     q2=$med
-
+   
                     ######Q1 (the median of the first half of the data)
                     cutPoint=$(( (numVals + 1) / 2 ))
                     (head -n $cutPoint $file2 > $fileFirst)
@@ -402,45 +409,49 @@ if [ $SKIP_COMBINE -eq 0  ]; then
                 fi
 
                 stats=($mean $min $q1 $q2 $q3 $max)
-                segCov["${seg}"]=${stats[@]}
+                segCov["${seg}"]="${stats[@]}"
+
+                ####Delete temporary files
+    	        rm "$file2"
+        	rm "$fileFirst"
+        	rm "$fileLast"
             done
 
-            ####iterate through all segments (whether or not present in this 
-            ####   barcode), get the coverage stats, and output the data to the csv file
+            ####Iterate through all segments (whether or not present in this 
+            ####   barcode), get the coverage stats, and output the data to 
+            ####   the csv file. This will be rearranged by statistic later
             newline="${barcode_number},"
-            for seg in ${segs[@]}; do
-                statCov=${segCov["$seg"]}
-                absent=1
-                #####for segments present in this barcode add the stats as normal
-                for stat in ${statCov[@]}; do
-                    newline+="${stat},"
-                    absent=0
-                done
-                
-                #####for segments absent add commas
-                if [ $absent -eq 1  ]; then
-                    newline+=",,,,,,"
-                fi 
 
+            for seg in ${segs[@]}; do
+                if [[ -n "${segCov["$seg"]}" ]]; then
+                    statCov=${segCov["$seg"]}
+                    #This while loop is to handle the fact that sometimes statCov comes in as an array and sometimes as a string. This ensures that each item within what should be an array is processed seperately in the for loop regardless
+                    while IFS=" " read -ra ADDR; do 
+                        for stat in "${ADDR[@]}"; do 
+                            newline+="${stat},"
+                        done
+                    done <<< "${statCov[@]}"
+
+                else
+                    newline+=",,,,,," 
+                fi
             done
-            newline=${newline::-1}   #remove extra comma
+            newline=${newline::-1}   #remove extra comma at the end of the line
             echo "$newline"          
+
            
-            ####Delete temporary files
-            rm coverageData_tmp.txt
-            rm coverageData_tmp_first.txt
-            rm coverageData_tmp_last.txt
- 
             ####Grab the READ_COUNTS file, extract read count data, and store it
             ####   in a dict of key: ( barcodeName SegmentName ), val: readCount
             while read line; do
                 if [ "${line:0:1}" == "4" ]; then
-                    IFS=" " read -r -a lineLst <<< $line 
-                    seg="${lineLst[0]0:2}"
+                    IFS="	" 
+                    read -r -a lineLst <<< $line 
+                    seg="${lineLst[0]:2:${#lineLst[0]}}"
                     readCnt=${lineLst[1]}
                     readCnts["${dir},${seg}"]=$readCnt 
                 fi
             done < READ_COUNTS.txt
+
 
             ####Go through readCnts, calculate "all" values for each barcode as
             ####   well as for all barcodes and store them in a new dict along
@@ -537,19 +548,11 @@ fi
 
 
 #Creating alignments from assembled sequences
-swH1Train=""; swH3Train=""
-REF_DIR_H1=""; REF_DIR_H3=""
 swCombForClassH1="";swCombForClassH3=""
 FAILED_MAFFT="ERROR: MAFFT alignment failed\n"
 if [ $SKIP_MAFFT -eq 0 ]; then
     echo -e "Aligning assembled sequences using MAFFT\n"
     
-    #Remove alignment files from previous mafft runs
-    #outer_fasta_count="$(ls -l *.aln 2>/dev/null | wc -l)"
-    #if (( $outer_fasta_count > 0 )); then
-    #    rm *.aln
-    #fi
-
     #For each fasta
     for file in *fasta; do
         if [[ ! "$file" =~ combined_barcode* ]]; then
@@ -609,13 +612,10 @@ if [ $SKIP_MAFFT -eq 0 ]; then
                         swFifty=$(echo $line | cut -d ' ' -f 2)
                     elif [ $name == "swineSmall" ]; then
                         swSmall=$(echo $line | cut -d ' ' -f 2)
-                    elif [ $name == "pickle" ]; then
-                        swH1Train=$(echo $line | cut -d ' ' -f 2)
                     fi
                 done < "${PURDY_DIR}/REFS/4_HA/1_H1/status.txt"
 
                 REF_DIR="${PURDY_DIR}/REFS/4_HA/1_H1/"
-                REF_DIR_H1="${PURDY_DIR}/REFS/4_HA/1_H1/"
             elif [ $seg == "A_HA_H2" ]; then
                 while read line;do
                     name=$(echo $line | cut -d ' ' -f 1)
@@ -644,13 +644,10 @@ if [ $SKIP_MAFFT -eq 0 ]; then
                         swFifty=$(echo $line | cut -d ' ' -f 2)
                     elif [ $name == "swineSmall" ]; then
                         swSmall=$(echo $line | cut -d ' ' -f 2)
-                    elif [ $name == "pickle" ]; then
-                        swH3Train=$(echo $line | cut -d ' ' -f 2)
                     fi
                 done < "${PURDY_DIR}/REFS/4_HA/3_H3/status.txt"
 
                 REF_DIR="${PURDY_DIR}/REFS/4_HA/3_H3/"
-		REF_DIR_H3="${PURDY_DIR}/REFS/4_HA/3_H3/"
             elif [ $seg == "A_HA_H4" ]; then
                 while read line;do
                     name=$(echo $line | cut -d ' ' -f 1)
@@ -1041,7 +1038,7 @@ if [ $SKIP_MAFFT -eq 0 ]; then
                 cat "$file" "${REF_DIR}${twoHun}" > "tmp_${seg}_twoHunComb.fasta"
                 twoHunCombFile="tmp_${seg}_twoHunComb.fasta"
 
-                mafft --quiet --thread "$NTHREADS" "$twoHunCombFile" > "${twoHunCombFile/.fasta/.aln}" || {
+                mafft --quiet --thread "$NTHREADS" "$twoHunCombFile" 2>/dev/null > "${twoHunCombFile/.fasta/.aln}" || {
                 echo -e >&2 "$FAILED_MAFFT"
 		echo -e >&2"1"
                 exit 1
@@ -1051,7 +1048,7 @@ if [ $SKIP_MAFFT -eq 0 ]; then
                     cat "$file" "${REF_DIR}${swTwoHun}" > "tmp_${seg}_swine_twoHunComb.fasta"
                     swTwoHunCombFile="tmp_${seg}_swine_twoHunComb.fasta"
 
-                    mafft --quiet --thread "$NTHREADS" "$swTwoHunCombFile" > "${swTwoHunCombFile/.fasta/.aln}" || {
+                    mafft --quiet --thread "$NTHREADS" "$swTwoHunCombFile" 2>/dev/null > "${swTwoHunCombFile/.fasta/.aln}" || {
                     echo -e >&2 "$FAILED_MAFFT"
 		    echo -e >&2 "2"
                     exit 1
@@ -1059,10 +1056,8 @@ if [ $SKIP_MAFFT -eq 0 ]; then
 
                     #capture the combined 200 file for classlog to use downstream
                     if [[ $seg == "A_HA_H1" ]]; then
-                        #swCombForClassH1="${swTwoHunCombFile/.fasta/.aln}"
 			swCombForClassH1="$swTwoHunCombFile"
                     elif [[ $seg == "A_HA_H3" ]]; then
-                        #swCombForClassH3="${swTwoHunCombFile/.fasta/.aln}"
 			swCombForClassH3="$swTwoHunCombFile"
                     fi
                 fi
@@ -1072,13 +1067,11 @@ if [ $SKIP_MAFFT -eq 0 ]; then
                     if [[ ! "$small" =~ NA ]]; then #50 < refs < 200
                         treeName_tmp=${twoHunCombFile/.fasta/.tre}
                         treeName=${treeName_tmp:4}
-                        echo -e "Although less than 200 references were available 
-for ${seg}, more than 50 were available and were used to generate 
-${treeName} and ${treeName}\n"
+                        echo -e "Although less than 200 references were available for ${seg}, more than 50 were available and were used to generate ${treeName} and ${treeName}\n"
                         cat "$file" "${REF_DIR}${small}" > "tmp_${seg}_twoHunComb.fasta"
                         twoHunCombFile="tmp_${seg}_twoHunComb.fasta"
 
-                        mafft --quiet --thread "$NTHREADS" "$twoHunCombFile" > "${twoHunCombFile/.fasta/.aln}" || {
+                        mafft --quiet --thread "$NTHREADS" "$twoHunCombFile" 2>/dev/null > "${twoHunCombFile/.fasta/.aln}" || {
                         echo -e >&2 "$FAILED_MAFFT"
 			echo -e >&2 "3"
                         exit 1
@@ -1088,7 +1081,7 @@ ${treeName} and ${treeName}\n"
                             cat "$file" "${REF_DIR}${swTwoHun}" > "tmp_${seg}_swine_twoHunComb.fasta"
                             swTwoHunCombFile="tmp_${seg}_swine_twoHunComb.fasta"
 
-                            mafft --quiet --thread "$NTHREADS" "$swTwoHunCombFile" > "${swTwoHunCombFile/.fasta/.aln}" || {
+                            mafft --quiet --thread "$NTHREADS" "$swTwoHunCombFile" 2>/dev/null > "${swTwoHunCombFile/.fasta/.aln}" || {
                             echo -e >&2 "$FAILED_MAFFT"
 			    echo -e >&2 "4"
                             exit 1
@@ -1109,9 +1102,7 @@ ${treeName} and ${treeName}\n"
                     fiftyCombFile="tmp_${seg}_fiftyComb.fasta"
                     treeName_tmp=${fiftyCombFile/.fasta/.tre}
                     treeName=${treeName_tmp:4}
-                    echo -e "Although less than 50 references were available 
-for ${seg}, what was available was used to generate 
-${treeName} and ${treeName}\n"
+                    echo -e "Although less than 50 references were available for ${seg}, what was available was used to generate ${treeName} and ${treeName}\n"
                     fifty=$small
                 fi
             fi
@@ -1120,7 +1111,7 @@ ${treeName} and ${treeName}\n"
             cat "$file" "${REF_DIR}${fifty}" > "tmp_${seg}_fiftyComb.fasta"
             fiftyCombFile="tmp_${seg}_fiftyComb.fasta"
 
-            mafft --quiet --thread "$NTHREADS" "$fiftyCombFile" > "${fiftyCombFile/.fasta/.aln}" || {
+            mafft --quiet --thread "$NTHREADS" "$fiftyCombFile" 2>/dev/null > "${fiftyCombFile/.fasta/.aln}" || {
             echo -e >&2 "$FAILED_MAFFT"
             echo -e >&2 "5"
             exit 1
@@ -1130,7 +1121,7 @@ ${treeName} and ${treeName}\n"
                 cat "$file" "${REF_DIR}${swFifty}" > "tmp_${seg}_swine_fiftyComb.fasta"
                 swFiftyCombFile="tmp_${seg}_swine_fiftyComb.fasta"
 
-                mafft --quiet --thread "$NTHREADS" "$swFiftyCombFile" > "${swFiftyCombFile/.fasta/.aln}" || {
+                mafft --quiet --thread "$NTHREADS" "$swFiftyCombFile" 2>/dev/null > "${swFiftyCombFile/.fasta/.aln}" || {
                 echo -e >&2 "$FAILED_MAFFT"
 		echo -e >&2 "6"
                 exit 1
@@ -1151,36 +1142,63 @@ if [ $SKIP_MAFFT -eq 0 ]; then
     for file in tmp_*aln; do
         notmp="${file:4}"
 
-        FastTree -quiet -nt "$file" > "${notmp/.aln/.tre}" || {
+        FastTree -quiet -nt "$file" 2>/dev/null > "${notmp/.aln/.tre}" || {
         echo >&2 "$FAILED_FT"
         exit 1
         }
     done
+
+    #cleanup by removing temporary files
+    for file in tmp_*; do
+        rm $file
+    done
+
 else
     echo -e "Skipping FastTree maximum likelihood tree construction\n"
 fi
 
 
 #Performing clade prediction
-FAILED_HP="ERROR: Host prediction failed\n"
+FAILED_HP="ERROR: Clade prediction failed\n"
 if [ $SKIP_CLADEPRED -eq 0 ]; then
-    echo -e "Predicting clade using classLog\n"
-    classlog predict "${REF_DIR_H1}${swH1Train}" A_HA_H1.fasta > swineCladePrediction_H1.csv
-    classlog predict "${REF_DIR_H3}${swH3Train}" A_HA_H3.fasta > swineCladePrediction_H3.csv
+    ##Collect reference data from files
+    REF_DIR_H1="${PURDY_DIR}/REFS/4_HA/1_H1/"
+    REF_DIR_H3="${PURDY_DIR}/REFS/4_HA/3_H3/"
 
-    #convert from tab delimited to CSV
-    sed -i 's/\t/,/g' swineCladePrediction_H1.csv
-    sed -i 's/\t/,/g' swineCladePrediction_H3.csv
+    while read line;do
+        name=$(echo $line | cut -d ' ' -f 1)
+        if [ $name == "pickle" ]; then
+            swH1Train=$(echo $line | cut -d ' ' -f 2)
+        fi
+    done < "${REF_DIR_H1}/status.txt"
+
+    while read line;do
+        name=$(echo $line | cut -d ' ' -f 1)
+        if [ $name == "pickle" ]; then
+            swH3Train=$(echo $line | cut -d ' ' -f 2)
+        fi          
+    done < "${REF_DIR_H3}/status.txt"
+
+    echo -e "Predicting clade using classLog\n"
+    if [ -f A_HA_H1.fasta ]; then
+        classlog predict "${REF_DIR_H1}${swH1Train}" A_HA_H1.fasta 2>/dev/null > swineCladePrediction_H1.csv
+        sed -i 's/\t/,/g' swineCladePrediction_H1.csv  #convert from tab delimited to CSV
+    else
+        echo -e "Clade prediction could not be completed for H1 due to a lack of H1 data in your data set\n"
+    fi
+
+    if [ -f A_HA_H3.fasta ]; then
+        classlog predict "${REF_DIR_H3}${swH3Train}" A_HA_H3.fasta 2>/dev/null > swineCladePrediction_H3.csv
+	sed -i 's/\t/,/g' swineCladePrediction_H3.csv  #convert from tab delimited to CSV
+    else
+        echo -e "Clade prediction could not be completed for H3 due to a lack of H3 data in your data set\n"
+    fi
 
 else
-    echo -e "Skipping host prediction\n" 
+    echo -e "Skipping clade prediction\n" 
 fi
 
 
-#cleanup by removing temporary files
-for file in tmp_*; do
-    rm $file
-done
 
 echo -e "PURDY is finished!\n"
 
