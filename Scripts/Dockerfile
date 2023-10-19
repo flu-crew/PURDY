@@ -9,7 +9,7 @@ RUN apt install -y gfortran build-essential
 
 #install most dependencies
 RUN apt-get install -y python3.9
-RUN apt install -y git mafft python3-pip pigz wget fasttree zlib1g pigz
+RUN apt install -y git mafft python3-pip pigz wget fasttree zlib1g
 RUN curl -L http://xrl.us/installperlnix | bash
 RUN pip3 install --upgrade pip
 
