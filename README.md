@@ -47,12 +47,19 @@ In this case "-t 12" tells PURDY to use 12 threads and "-o fullPurdyRunOct19" te
 
 ### Installing all Dependencies individually (not recommended)
 While it is possible to install all of PURDY's dependencies without the docker image it is not recommended. The total number of dependencies is great and there are sometimes conflicts between versions of software which can be hard to predict.  If you choose to take this route despite this warning here are the dependencies you will need to install (some of which have their own dependencies):
+
 Guppy - https://help.nanoporetech.com/en/collections/3738249-guppy
+
 IRMA (using the flu module) - https://wonder.cdc.gov/amd/flu/irma/
+
 R - https://www.r-project.org/
+
 perl - https://www.perl.org/get.html
+
 samtools - http://www.htslib.org/
+
 MAFFT - https://mafft.cbrc.jp/alignment/software/
+
 FastTree - http://www.microbesonline.org/fasttree/
 Python3 - https://www.python.org/downloads/
 
