@@ -38,10 +38,14 @@ singularity pull -F docker://darwin1990/purdydock
 This will install the file, "purdydock_latest.sif", in the directory where this command was run.
 
 And then To run PURDY run this command:
+```
 singularity run purdydock_latest.sif
+```
 
 This would run PURDY with all default arguments. A more realistic example is the following:
+```
 singularity run purdydock_latest.sif -t 12 -o fullPurdyRunOct19
+```
 
 In this case "-t 12" tells PURDY to use 12 threads and "-o fullPurdyRunOct19" tells PURDY to put the results in a folder called "fullPurdyRunOct19" which will be created if one does not already exist.
 
@@ -61,6 +65,7 @@ samtools - http://www.htslib.org/
 MAFFT - https://mafft.cbrc.jp/alignment/software/
 
 FastTree - http://www.microbesonline.org/fasttree/
+
 Python3 - https://www.python.org/downloads/
 
 
