@@ -20,27 +20,41 @@ The largest test data set is the Avian host H5N1 Influenza A data set from Ip et
 This section will guied you through how to install PURDY's dependencies and do a basic run. See the next section to explore available arguments.
 
 ### Using Docker
-Docker is a container system wich allows you to run PURDY in an environment we created that already contains all the dependencies you need. For more information about Docker check out their website:
-https://www.docker.com/
-All you will need to make this work is to download docker to the machine you are using to run PURDY. You will find their download options here:
-https://docs.docker.com/get-docker
+Docker is a container system wich allows you to run PURDY in an environment we created that already contains all the dependencies you need. For more information about Docker check out their website: https://www.docker.com/
+All you will need to make this work is to download docker to the machine you are using to run PURDY. You will find their download options here: https://docs.docker.com/get-docker
 
-If you are working on an HPC cluster you may be able to simply load a Docker module. On the other hand, some HPC systems believe Docker to be a security risk and therefore allow access to docker images only indirectly via Aptianer (formerly Singularity). If you are working an such an HPC systems try the "Using Aptainer" method of installing dependencies and running PURDY instead of this one.
+If you are working on an HPC cluster you may be able to simply load a Docker module. On the other hand, some HPC systems believe Docker to be a security risk and therefore allow access to docker images only indirectly via Apptianer (formerly Singularity). If you are working an such an HPC systems try the "Using Aptainer" method of installing dependencies and running PURDY instead of this one.
 
 We have uploaded the docker image to docker at https://hub.docker.com/repository/docker/darwin1990/purdydock/general
 
 [Test and show direct examples]
 
 
-### Using Aptainer (formerly Singularity)
-[explain Aptianer]
-
+### Using Apptainer (formerly Singularity)
+Without going into details Apptainer is a more secure method of running containers on an HPC system and you can learn more about it here: https://apptainer.org/docs/user/main/index.html
+To upload the docker image via Apptainer simply run this command:
 singularity pull -F docker://darwin1990/purdydock
-singularity run purdydock_latest.sif -t 12 -o fullPurdyRunOct18
-[investigate whether this is really the best way post-Aptainer]
 
+This will install the file, "purdydock_latest.sif", in the directory where this command was run.
 
+And then To run PURDY run this command:
+singularity run purdydock_latest.sif
+
+This would run PURDY with all default arguments. A more realistic example is the following:
+singularity run purdydock_latest.sif -t 12 -o fullPurdyRunOct19
+
+In this case "-t 12" tells PURDY to use 12 threads and "-o fullPurdyRunOct19" tells PURDY to put the results in a folder called "fullPurdyRunOct19" which will be created if one does not already exist.
 
 ### Installing all Dependencies individually (not recommended)
+While it is possible to install all of PURDY's dependencies without the docker image it is not recommended. The total number of dependencies is great and there are sometimes conflicts between versions of software which can be hard to predict.  If you choose to take this route despite this warning here are the dependencies you will need to install (some of which have their own dependencies):
+Guppy - https://help.nanoporetech.com/en/collections/3738249-guppy
+IRMA (using the flu module) - https://wonder.cdc.gov/amd/flu/irma/
+R - https://www.r-project.org/
+perl - https://www.perl.org/get.html
+samtools - http://www.htslib.org/
+MAFFT - https://mafft.cbrc.jp/alignment/software/
+FastTree - http://www.microbesonline.org/fasttree/
+Python3 - https://www.python.org/downloads/
+
 
 # PURDY's Arguments (user options)
