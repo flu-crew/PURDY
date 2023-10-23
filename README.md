@@ -27,8 +27,12 @@ If you are working on an HPC cluster you may be able to simply load a Docker mod
 
 We have uploaded the docker image to docker at https://hub.docker.com/repository/docker/darwin1990/purdydock/general
 
-[Test and show direct examples]
+To run PURDY using Docker directly first make sure that docker is installed and running, go to the directory where your data is stored, then load the docker image in using the command: 
+```
+docker pull darwin1990/purdydock
+```
 
+Then 
 
 ### Using Apptainer (formerly Singularity)
 Without going into details Apptainer is a more secure method of running containers on an HPC system and you can learn more about it here: https://apptainer.org/docs/user/main/index.html
@@ -47,7 +51,7 @@ This would run PURDY with all default arguments. A more realistic example is the
 singularity run purdydock_latest.sif -t 12 -o fullPurdyRunOct19
 ```
 
-In this case "-t 12" tells PURDY to use 12 threads and "-o fullPurdyRunOct19" tells PURDY to put the results in a folder called "fullPurdyRunOct19" which will be created if one does not already exist.
+Everything folloving "purdydock_latest.sif" is fed directly to PURDY. In this case "-t 12" tells PURDY to use 12 threads and "-o fullPurdyRunOct19" tells PURDY to put the results in a folder called "fullPurdyRunOct19" which will be created if one does not already exist.
 
 ### Installing all Dependencies individually (not recommended)
 While it is possible to install all of PURDY's dependencies without the docker image it is not recommended. The total number of dependencies is great and there are sometimes conflicts between versions of software which can be hard to predict.  If you choose to take this route despite this warning here are the dependencies you will need to install (some of which have their own dependencies):
