@@ -19,22 +19,7 @@ The largest test data set is the Avian host H5N1 Influenza A data set from Ip et
 ## 2) Install Dependencies and Run PURDY
 This section will guied you through how to install PURDY's dependencies and do a basic run. See the next section to explore available arguments.
 
-### Using Docker
-Docker is a container system wich allows you to run PURDY in an environment we created that already contains all the dependencies you need. For more information about Docker check out their website: https://www.docker.com/
-All you will need to make this work is to download docker to the machine you are using to run PURDY. You will find their download options here: https://docs.docker.com/get-docker
-
-If you are working on an HPC cluster you may be able to simply load a Docker module. On the other hand, some HPC systems believe Docker to be a security risk and therefore allow access to docker images only indirectly via Apptianer (formerly Singularity). If you are working an such an HPC systems try the "Using Aptainer" method of installing dependencies and running PURDY instead of this one.
-
-We have uploaded the docker image to docker at https://hub.docker.com/repository/docker/darwin1990/purdydock/general
-
-To run PURDY using Docker directly first make sure that docker is installed and running, go to the directory where your data is stored, then load the docker image in using the command: 
-```
-docker pull darwin1990/purdydock
-```
-
-Then 
-
-### Using Apptainer (formerly Singularity)
+### Using Apptainer (most recommended, formerly Singularity)
 Without going into details Apptainer is a more secure method of running containers on an HPC system and you can learn more about it here: https://apptainer.org/docs/user/main/index.html
 To upload the docker image via Apptainer simply run this command:
 singularity pull -F docker://darwin1990/purdydock
@@ -52,6 +37,40 @@ singularity run purdydock_latest.sif -t 12 -o fullPurdyRunOct19
 ```
 
 Everything folloving "purdydock_latest.sif" is fed directly to PURDY. In this case "-t 12" tells PURDY to use 12 threads and "-o fullPurdyRunOct19" tells PURDY to put the results in a folder called "fullPurdyRunOct19" which will be created if one does not already exist.
+
+### Using Docker
+Docker is a container system wich allows you to run PURDY in an environment we created that already contains all the dependencies you need. For more information about Docker check out their website: https://www.docker.com/
+All you will need to make this work is to download docker to the machine you are using to run PURDY. You will find their download options here: https://docs.docker.com/get-docker
+
+If you are working on an HPC cluster you may be able to simply load a Docker module. On the other hand, some HPC systems believe Docker to be a security risk and therefore allow access to docker images only indirectly via Apptianer (formerly Singularity). If you are working an such an HPC systems try the "Using Aptainer" method of installing dependencies and running PURDY instead of this one.
+
+We have uploaded the docker image to docker at https://hub.docker.com/repository/docker/darwin1990/purdydock/general
+
+To run PURDY using Docker directly first make sure that docker is installed and running, go to the directory where your data is stored, then load the docker image in using the command: 
+```
+docker pull darwin1990/purdydock
+```
+
+Then create the input and output folders. For now the input folder must be named "fastq_pass" and contain all the fastq files you want to be part of this run. This will be changed very soon in an update. If you're using Docker directly rather than Apptainer you will have to create a folder for the output even if you are using the default output folder, "fastq_pass_Demultiplexed", for Docker to see your input and write an output to a place where you can access it.
+```
+mkdir fastq_pass
+mv [your_data.fastq] fastq_pass
+
+mkdir fastq_pass_Demultiplexed
+docker run -v "$(pwd)/fastq_pass":"/fastq_pass" -v "$(pwd)/fastq_pass_Demultiplexed":"/fastq_pass_Demultiplexed" darwin1990/purdydock
+```
+
+Here [your_data] is a stand-in for all of your fastq-files you want ot be part of this run. This would run PURDY with all default arguments. A more realistic example is the following:
+
+```
+mkdir fastq_pass
+mv [your_data.fastq] fastq_pass
+
+mkdir fullPurdyRunOct19
+docker run -v "$(pwd)/fastq_pass":"/fastq_pass" -v "$(pwd)/testRunOct23":"/testRunOct23" darwin1990/purdydock -t 6 -o testRunOct19
+```
+
+In this case "-t 6" tells PURDY to use 6 threads and "-o fullPurdyRunOct19" tells PURDY to put the results in a folder called "fullPurdyRunOct19" which will be created if one does not already exist.
 
 ### Installing all Dependencies individually (not recommended)
 While it is possible to install all of PURDY's dependencies without the docker image it is not recommended. The total number of dependencies is great and there are sometimes conflicts between versions of software which can be hard to predict.  If you choose to take this route despite this warning here are the dependencies you will need to install (some of which have their own dependencies):
