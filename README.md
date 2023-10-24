@@ -227,7 +227,7 @@ If the user wants to rename the folder where IRMA puts the assembled sequences b
 purdy -a IrmasOutput 
 ```
 
-PURDY can also be operated in a modular fashion using the `-s` argument. This argument allows the user to skip one of PURDY's steps. One use case for this is if someone is simply not interested in one or all of the analysis tools and just wants to do demultiplexing and assembly including PURDY's assistance with data interpretation. The following example command would skip all analysis tools:
+PURDY can also be operated in a modular fashion using the `-s` argument. This argument allows the user to skip one or more of PURDY's steps. One use case for this is if someone is simply not interested in one or all of the analysis tools and just wants to do demultiplexing and assembly including PURDY's assistance with data interpretation. The following example command would skip all analysis tools:
 
 ```
 purdy -s ms
