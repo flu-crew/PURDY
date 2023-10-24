@@ -17,7 +17,7 @@ The second smallest test data set is the Swine host H1N1, H1N2, and H3N2 Influen
 The largest test data set is the Avian host H5N1 Influenza A data set from Ip et al. 2023 (https://www.mdpi.com/2076-2607/11/2/529). This data can be downloaded from ScienceBase (https://doi.org/10.5066/P93VXVGO). We used all three highly pathogenic H5N1 avian MinION sequences using the library assembly technique referred to as “Method A” in Ip et al. 2023 (https://www.mdpi.com/2076-2607/11/2/529). Here the true data is in barcodes and 4-6. **This data set is the best choice for someone who wants a large test data set with very deep coverage in an avian host.**
 
 ## 2) Install Dependencies and Run PURDY
-This section will guied you through how to acquire PURDY,install PURDY's dependencies, and do a basic run with either a test data set or your data set. PURDY is written and bash and does not need to be installed or complied. See the next section to explore available arguments.
+This section will guide you through how to acquire PURDY,install PURDY's dependencies, and do a basic run with either a test data set or your data set. PURDY is written and bash and does not need to be installed or complied. See the next section to explore available arguments.
 
 ### Using Apptainer (most recommended, formerly Singularity)
 Without going into details Apptainer is a more secure method of running containers on an HPC system and you can learn more about it here: https://apptainer.org/docs/user/main/index.html
