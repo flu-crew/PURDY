@@ -233,7 +233,7 @@ PURDY can also be operated in a modular fashion using the `-s` argument. This ar
 purdy -s ms
 ```
 
-Another use case for the `-s` argument is if someone has already run PURDY and it failed in the middle (in the example during IRMA assembly) or if someone has already completed demultiplexing. and wants to start with IRMA assembly. The following example command would accomplish this:
+Another use case for the `-s` argument is if someone has already run PURDY and it failed in the middle (in the example during IRMA assembly) or if someone has already completed demultiplexing and wants to start with IRMA assembly. The following example command would accomplish this:
 
 ```
 purdy -s g
