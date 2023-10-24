@@ -215,7 +215,7 @@ All of PURDY's arguments are laid out in the help menu. This menu can be accesse
         --version : prints the version number
 ```
 
-For the average user the arguments `-i`, `-o`, and `-t` are the only important ones. The arguments `-i` and `-o` allow the user to specify the name of the input and output folders, whereas `-t` allows the user to specify the number of threads to use. The number of threads is used for both demultiplexing using Guppy and alignment of user data with reference sequences using MAFFT. The following example command specifies `-i`, `-o`, and `-t`:
+For many users the arguments `-i`, `-o`, and `-t` are the only important ones. The arguments `-i` and `-o` allow the user to specify the name of the input and output folders, whereas `-t` allows the user to specify the number of threads to use. The number of threads is used for both demultiplexing using Guppy and alignment of user data with reference sequences using MAFFT. The following example command specifies `-i`, `-o`, and `-t`:
 
 ```
 purdy -i inputSeqs -o testRunOct19 -t 16
