@@ -30,7 +30,7 @@ Once you have either installed or loaded Apptainer, to download the docker image
 apptainer pull -F docker://darwin1990/purdydock
 ```
 
-After the image has been installed, create the folder and move your data into it. For now the input folder must be named "fastq_pass" and contain all the fastq files you want to be part of this run. This will be changed very soon in an update. 
+After the image has been installed, create the folder and move your data into it. Here the input folder is named "fastq_pass" to match PURDY's default expectation and should contain all the fastq files you want to be part of this run. 
 ```
 mkdir fastq_pass
 mv your_data.fastq fastq_pass
@@ -61,7 +61,7 @@ We have uploaded the docker image to Docker Hub at https://hub.docker.com/reposi
 docker pull darwin1990/purdydock
 ```
 
-Then create the input and output folders. For now the input folder must be named "fastq_pass" and contain all the fastq files you want to be part of this run. This will be changed very soon in an update. If you're using Docker directly rather than Apptainer you will have to create a folder for the output even if you are using the default output folder, "fastq_pass_Demultiplexed", for Docker to see your input and write an output to a place where you can access it.
+Then create the input and output folders. Here the input folder is named "fastq_pass" to match PURDY's default expectation and should contain all the fastq files you want to be part of this run. If you're using Docker directly rather than Apptainer you will have to create a folder for the output even if you are using the default output folder, "fastq_pass_Demultiplexed", for Docker to see your input and write an output to a place where you can access it.
 ```
 mkdir fastq_pass
 mv your_data.fastq fastq_pass
@@ -164,16 +164,13 @@ You should see the help menu which looks something like this:
 ```
 
 
-After dependencies and PURDY are installed and added to your PATH, create the folder and move your data into it. For now the input folder must be named "fastq_pass" and contain all the fastq files you want to be part of this run. This will be changed very soon in an update. 
+After dependencies and PURDY are installed and added to your PATH, create the folder and move your data into it. Here the input folder is named "fastq_pass" to match PURDY's default expectation and should contain all the fastq files you want to be part of this run. 
 ```
 mkdir fastq_pass
 mv your_data.fastq fastq_pass
 ```
 
-Here your_data.fastq could be either one or multiple fastq files, but should be all of the data you want included in this PURDY run.
-
-
-After your input folder is prepared PURDY can be run directly using the following basic command:
+Here your_data.fastq could be either one or multiple fastq files, but should be all of the data you want included in this PURDY run. After your input folder is prepared PURDY can be run directly using the following basic command:
 ```
 purdy
 ```
@@ -190,4 +187,56 @@ In this case "-t 6" tells PURDY to use 6 threads and "-o fullPurdyRunOct19" tell
 
 # PURDY's Arguments (user options)
 
+All of PURDY's arguments are laid out in the help menu. This menu can be accessed by typing `purdy -h`, `purdy --help`, or making any mistakes while calling PURDY.  The help menu looks like so:
+```
+    ##########################################################################
+                       Welcome to purdy version 1.0.0!
+    ##########################################################################
+    Dependencies for this program are guppy, r, and IRMA
+    For this help menu use the argument -h
 
+    WARNING: ENSURE THAT YOU ARE NOT RUNNING THIS ON THE HEADNODE!
+    WARNING: ENSURE THAT IRMA IS IN YOUR PATH
+
+    Arguments:
+        -i : Input directory. Default is 'fastq_pass'
+        -o : Output directory. Default is 'fastq_pass_Demultiplexed'
+        -t : Number of threads. Default is 1
+	-a : Assemly folder for storing the output of IRMA within each barcode
+             folder inside of the demultiplexing birectory. Default is 
+             "assembly"
+        -s : Skip a portion of purdy. Options: '0' = skip nothing, 
+             'g' = skip guppy demultiplexing, 'i' = skip IRMA assembly,
+             'c' = skip collecting IRMA results into combined fasta files,
+             and skip QC statistic calculations, 'm' = skip MAFFT assembly
+              and FastTree ML tree construction, and 's' = skip swine clade 
+             prediction. These options may be combined. Default is 0.
+
+        --version : prints the version number
+```
+
+For the average user the arguments `-i`, `-o`, and `-t` are the only important ones. The arguments `-i` and `-o` allow the user to specify the name of the input and output folders, whereas `-t` allows the user to specify the number of threads to use. The number of threads is used for both demultiplexing using Guppy and alignment of user data with reference sequences using MAFFT. The following example command specifies `-i`, `-o`, and `-t`:
+
+```
+purdy -i inputSeqs -o testRunOct19 -t 16
+```
+
+If the user wants to rename the folder where IRMA puts the assembled sequences before PURDY works with them they can specify a new name with the argument `-a`. The following example command specifies `-a`:
+
+```
+purdy -a IrmasOutput 
+```
+
+PURDY can also be operated in a modular fashion using the `-s` argument. This argument allows the user to skip one of PURDY's steps. One use case for this is if someone is simply not interested in one or all of the analysis tools and just wants to do demultiplexing and assembly including PURDY's assistance with data interpretation. The following example command would skip all analysis tools:
+
+```
+purdy -s ms
+```
+
+Another use case for the `-s` argument is if someone has already run PURDY and it failed in the middle (in the example during IRMA assembly) or if someone has already completed demultiplexing. and wants to start with IRMA assembly. The following example command would accomplish this:
+
+```
+purdy -s g
+```
+
+For more information on PURDY and all of its arguments see Hufnagel et al. 2023 (XXXXXX)
