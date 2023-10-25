@@ -1,0 +1,1217 @@
+#!/bin/bash
+
+
+
+
+#Exit when any command fails
+#set -e
+
+#The directory where purdy is held
+PURDY_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+#PURDY's version
+VERSION="0.9.5"
+
+
+##### Define functions #####
+#Print the help menu
+function print_help_menu() {
+    cat <<helpChunk
+
+    ##########################################################################
+                       Welcome to purdy version ${VERSION}!
+    ##########################################################################
+    Dependencies for this program are guppy, r, and IRMA
+    For this help menu use the argument -h
+
+    WARNING: ENSURE THAT YOU ARE NOT RUNNING THIS ON THE HEADNODE!
+
+    Arguments:
+        -i : Input directory. Default is 'fastq_pass'
+        -o : Output directory. Default is 'fastq_pass_Demultiplexed'
+        -t : Number of threads. Default is 1
+	-a : Assemly folder for storing the output of IRMA within each barcode
+             folder inside of the demultiplexing birectory. Default is 
+             "assembly"
+        -s : Skip a portion of purdy. Options: '0' = skip nothing, 
+             'g' = skip Guppy demultiplexing, 'i' = skip IRMA assembly,
+             'c' = skip collecting IRMA results into combined fasta files,
+             and skip QC statistic calculations, 'm' = skip MAFFT assembly
+              and FastTree ML tree construction, and 's' = skip swine clade 
+             prediction. These options may be combined. Default is 0.
+
+        --version : prints the version number
+
+helpChunk
+    exit 1
+}
+
+
+EvenMedian () {
+    totVals=$1
+    dataFile=$2
+
+    medRow1=$(( (totVals + 1) / 2 ))
+    medRow2=$(( ((totVals + 1) / 2) + 1 ))
+
+    medLow=$(head -n $medRow1 $dataFile | tail -n 1 | cut -f 3)
+    medHigh=$(head -n $medRow2 $dataFile | tail -n 1 | cut -f 3)
+    med=$(echo "scale=1 ; ($medLow + $medHigh) / 2" | bc)
+}
+
+
+OddMedian () {
+    totVals=$1
+    dataFile=$2
+
+    medRow=$(( (totVals + 1) / 2 ))
+    medTmp=$(head -n $medRow $dataFile | tail -n 1 | cut -f 3)
+    med=$(echo "scale=1 ; $medTmp" | bc)
+}
+
+
+
+
+##### Body #####
+#Assign defaults to variables
+INP_DIR="./fastq_pass"
+DEM_DIR="./fastq_pass_Demultiplexed"
+NTHREADS=1
+IRMA_SAMP_NAME="assembly"
+SKIP_GUPPY=0; SKIP_IRMA=0; SKIP_COMBINE=0
+SKIP_MAFFT=0; SKIP_HOSTPRED=0; SKIP_CLADEPRED=0
+
+
+#Go through input and assign input arguments to variables
+while getopts ":i:o:t:a:s:-:h" opt; do
+    case ${opt} in 
+      i )
+        INP_DIR=$OPTARG
+        ;;
+      o )
+        DEM_DIR=$OPTARG
+        ;;
+      t )
+        NTHREADS=$OPTARG
+        ;;
+      a )
+        IRMA_SAMP_NAME="$OPTARG"
+        ;;
+      s )
+        if [[ $OPTARG != *"0"* ]]; then
+            if [[ $OPTARG == *"g"* ]]; then
+                SKIP_GUPPY=1
+            fi
+            if [[ $OPTARG == *"i"* ]]; then
+                SKIP_IRMA=1
+            fi
+            if [[ $OPTARG == *"c"* ]]; then
+                SKIP_COMBINE=1
+            fi
+            if [[ $OPTARG == *"m"* ]]; then
+                SKIP_MAFFT=1
+            fi
+            if [[ $OPTARG == *"h"* ]]; then
+                SKIP_HOSTPRED=1
+            fi
+            if [[ $OPTARG == *"s"* ]]; then
+                SKIP_CLADEPRED=0
+            fi
+        fi
+        ;;
+      - )
+        if [[ "$OPTARG" == "version" ]]; then
+            echo "PURDY v${VERSION}"
+            exit 1
+        else
+            echo -e "\nERROR: Invalid argument: --$OPTARG" 1>&2
+            print_help_menu
+        fi
+        ;;
+      h )
+        print_help_menu
+        ;;
+      \? )
+        echo -e "\nERROR: Invalid argument: -$OPTARG" 1>&2
+        print_help_menu
+        ;;
+    esac
+done
+
+
+#Handle the case when no arguments are given
+if [ $# -eq 0 ]; then
+    echo -e "\nERROR: No arguments provided" 1>&2
+    print_help_menu
+fi
+
+
+#Make a new demultiplexing folder if it doesn't exist
+if [ ! -d "$DEM_DIR" ]; then
+    mkdir "$DEM_DIR"
+fi
+
+
+#Demultiplexing/barcoding
+FAILED_GUPPY="ERROR: Guppy demultiplexing failed!"
+if [ $SKIP_GUPPY -eq 0 ]; then
+    echo -e "running guppy\n"
+    guppy_barcoder -i "$INP_DIR" -s "$DEM_DIR" -t "$NTHREADS" || {
+    echo >&2 "$FAILED_GUPPY"
+    exit 1
+    }
+else
+    echo -e "Skipping Guppy demultiplexing\n"
+fi
+
+
+#Assebmly with IRMA
+FAILED_IRMA="ERROR: IRMA assembly failed!"
+cd "$DEM_DIR"
+if [ $SKIP_IRMA -eq 0 ]; then
+    echo -e "running IRMA\n"
+    for DIR in barcode*; do #move through barcode* folders
+        cd "$DIR" || {
+        echo -e >&2 "\nERROR: There seem to be no barcode folders in your demultiplexing directory, $DEM_DIR"
+        exit 1
+        }
+
+        #remove the assembly folder if present
+        if [ -e $IRMA_SAMP_NAME ]; then
+            rm -r $IRMA_SAMP_NAME
+        fi
+
+        #count number of fastqs present and run IRMA accordingly
+        echo "assembling ${DIR}"
+        NUM_FASTQS=0
+        NUM_FASTQS=$(ls *fastq | wc -l)
+        if [ $NUM_FASTQS == 0 ]; then
+            echo -e "WARNING: \nno fastq files in $DIR\n"
+        else
+            NUM_FASTQS=$(ls *fastq | wc -l)
+
+            if [ $NUM_FASTQS == 1 ]; then
+                FILE="$(ls *fastq)"
+                IRMA FLU-minion "$FILE" "$IRMA_SAMP_NAME" || {
+                echo >&2 "$FAILED_IRMA"
+                exit 1
+                }
+            else
+                if [ -f allSeqs.fastq ]; then
+                    rm allSeqs.fastq
+                fi
+                cat *fastq > allSeqs.fastq
+                IRMA FLU-minion allSeqs.fastq "$IRMA_SAMP_NAME" || {
+                echo >&2 "$FAILED_IRMA"
+	        exit 1
+                }
+                FILE="allSeqs.fastq"
+            fi
+        fi
+
+        cd ..
+    done
+else
+    echo -e "Skipping IRMA assembly\n"
+fi
+
+
+#Combining IRMA's output into one fasta file per genome segment (modified from a script written by Megan Neveau) as well as one file per barcode
+FAILED_COL="ERROR: file collection failed!"
+if [ $SKIP_COMBINE -eq 0 ]; then
+    #Remove combined fastas from previous runs of IRMA output combination
+    outer_fasta_count="$(ls -l *.fasta 2>/dev/null | wc -l)"
+    if (( $outer_fasta_count > 0 )); then
+        rm *.fasta
+    fi
+
+    echo -e "\nCollecting IRMAs output\n"
+    for dir in barcode*; do #move through barcode* folders again
+        cd "$dir"
+        full_dir=`pwd`
+        barcode_number=`basename "$full_dir"`
+        suffix="_${barcode_number}.fasta"
+        cd "$IRMA_SAMP_NAME"
+        fasta_count="$(ls -l *.fasta 2>/dev/null | wc -l)"
+        
+        ##Delete per barcode fasta if present (to deal with previous runs)
+        perBarFasta="../../combined_${barcode_number}.fasta"
+        if [ -f $perBarFasta ]; then
+            rm "$perBarFasta"
+        fi
+
+        if [ $fasta_count != 0 ]; then
+            for file in *.fasta; do
+                seq_cat="../../$file"
+                seq_ID="${file/.fasta/_${barcode_number}}"
+                temp_file="${file/.fasta/_temp${suffix}}"
+                awk -v name=$seq_ID '/^>/ {gsub(/.fa(sta)?$/,"",name);printf(">%s\n",name);next;} {print}' $file > $temp_file || {
+                echo >&2 "$FAILED_COL"
+                exit 1
+                }
+                #normalize sequence
+                sed -e '/^[^>]/s/[^ATGCURYSWKMatgcuryswkm]/N/g' "$temp_file" >> "$seq_cat"
+                sed -e '/^[^>]/s/[^ATGCURYSWKMatgcuryswkm]/N/g' "$temp_file" >> "$perBarFasta"
+                rm "$temp_file"
+            done
+        fi
+        cd ../..
+    done
+else
+    echo -e "Skipping IRMA output collection\n"
+fi
+
+#Calculate and output QC values
+barcodes=()
+test=""
+declare -A readCnts
+declare -A readCnts2
+if [ $SKIP_COMBINE -eq 0  ]; then 
+    echo -e "Calculating QC values\n"
+
+    ##Determine which segments are present and store them in a basic array
+    segs=()
+    for dir in barcode*; do
+        cd $dir
+        if [ -d "${IRMA_SAMP_NAME}/tables" ]; then
+            cd $IRMA_SAMP_NAME
+            for file in *fasta; do
+                seg="${file/.fasta/}"
+                if [[ ! "${segs[*]}" =~ "${seg}" ]]; then #add segment to list if it isn't already present
+                    segs+=( "$seg" )
+                fi
+            done
+            cd ..
+        fi
+        cd ..
+    done
+
+    ##Write title line for coverage file
+    titleCov="sample,"
+    for seg in ${segs[@]}; do
+        titleCov+="${seg}_mean,"
+        titleCov+="${seg}_min,"
+        titleCov+="${seg}_Q1,"
+        titleCov+="${seg}_median,"
+        titleCov+="${seg}_Q3,"
+        titleCov+="${seg}_max,"
+    done
+
+    titleCov=${titleCov::-1}   #remove extra comma
+    echo $titleCov > coverageMeans.csv
+
+
+    ##Go through barcode files, extract coverage information, calculate 
+    ##   averages, medians, min, max, Q1, and Q3 values  and output to CSV
+    ##    files. Also assemble total read counts into a seperate CSV.
+    for dir in barcode*; do
+        ###Build up a list of barcode names
+        barcodes+=( $dir )
+   
+        cd $dir
+        full_dir=`pwd`
+        barcode_number=`basename "$full_dir"`
+
+        ###reset variables for barcodes without all segments
+        total=""; mean=""; seg=""; min=""; q1=""; med=""; q3=""; max=""
+        ####If coverage files don't exist for this barcode do nothing
+        if [ -d "${IRMA_SAMP_NAME}/tables" ] && compgen -G "${IRMA_SAMP_NAME}/tables/*coverage.txt" > /dev/null; then
+            cd "${IRMA_SAMP_NAME}/tables"
+            ####for each coverage file add to an asociative array of key: segment  
+            ####  val: c(min,q1,med,q3,max)
+            unset segCov                                                             #reset the associative array
+            declare -A segCov
+
+
+            ####If coverage files don't exist for this barcode do nothing
+	    ####  Otherwise use coverage files to calculate all statistics
+            for file in *-coverage.txt
+            do
+                #####Mean calculcation
+                total=$(cut -f 3 $file | tail -n +2 | paste -sd+ - | bc)             #the sum of all coverage values
+                (( cnt = $(wc -l $file | cut -f 1 -d ' ') - 1 ))                     #the number of coverage values
+                mean=$(echo "scale=2; $total/$cnt" | bc | awk '{print int($1+0.5)}') #The mean of coverage values
+                seg="${file/-coverage.txt/}"
+
+                #####remove header and sort data for other calculations
+                file2="coverageData_tmp.txt"
+                fileFirst="coverageData_tmp_first.txt"
+                fileLast="coverageData_tmp_last.txt"
+                (tail -n+2  $file | cut -f 3 | sort -n > $file2)   
+ 
+                #####calculate min and max
+                min=$(head -n 1 $file2)
+                max=$(tail -n 1 $file2)
+
+                #####calculate quartiles including median
+                numVals=$(wc -l $file2 | cut -d ' ' -f 1)
+                med=-9 #instantiate med, this is used to pass numbers to and from functions
+                if [ $((numVals%2)) -eq 0 ]; then
+                    ######even number of data points
+                    ######median
+                    EvenMedian $numVals $file2
+                    q2=$med
+   
+                    ######Q1 (the median of the first half of the data)
+                    cutPoint=$(( (numVals + 1) / 2 ))
+                    (head -n $cutPoint $file2 > $fileFirst)
+                    numValsFirst=$(wc -l $fileFirst | cut -d ' ' -f 1)
+
+                    if [ $((numValsFirst%2)) -eq 0  ]; then
+                        EvenMedian $numValsFirst $fileFirst
+                    else
+                        OddMedian $numValsFirst $fileFirst
+                    fi
+                    q1=$med
+
+                    ######Q3 (the median of the second half of the data)
+                    cutPoint=$(( (numVals + 1) / 2))
+                    (tail -n $cutPoint $file2 > $fileLast)
+                    numValsLast=$(wc -l $fileLast | cut -d ' ' -f 1)
+
+                    if [ $((numValsLast%2)) -eq 0  ]; then
+                        EvenMedian $numValsLast $fileLast
+                    else
+                        OddMedian $numValsLast $fileLast
+                    fi
+                    q3=$med
+
+                else
+                    ######odd number of data points
+                    ######median
+                    OddMedian $numVals $file2
+                    q2=$med
+
+                    #Q1 (the median of the first half of the data)
+                    midpoint=$(( (numVals + 1) / 2 ))
+                    cutPoint=$(( midpoint - 1 ))
+                    (head -n $cutPoint $file2 > $fileFirst)
+                    numValsFirst=$(wc -l $fileFirst | cut -d ' ' -f 1)
+
+                    if [ $((numValsFirst%2)) -eq 0  ]; then
+                        EvenMedian $numValsFirst $fileFirst
+                    else
+                        OddMedian $numValsFirst $fileFirst
+                    fi
+                    q1=$med
+
+                    #Q3 (the median of the second half of the data)
+                    (tail -n $cutPoint $file2 > $fileLast)
+                    numValsLast=$(wc -l $fileLast | cut -d ' ' -f 1)
+
+                    if [ $((numValsLast%2)) -eq 0  ]; then
+                        EvenMedian $numValsLast $fileLast
+                    else
+                        OddMedian $numValsLast $fileLast
+                    fi
+                    q3=$med
+                fi
+
+                stats=($mean $min $q1 $q2 $q3 $max)
+                segCov["${seg}"]=${stats[@]}
+
+                ####Delete temporary files
+    	        rm "$file2"
+        	rm "$fileFirst"
+        	rm "$fileLast"
+            done
+
+
+            ####iterate through all segments (whether or not present in this 
+            ####   barcode), get the coverage stats, and output the data to the csv file
+            newline="${barcode_number},"
+            absent=1
+            for seg in ${segs[@]}; do
+                statCov=${segCov["$seg"]}
+                absent=1
+                #####for segments present in this barcode add the stats as normal
+                for stat in ${statCov[@]}; do
+                    newline+="${stat},"
+                    absent=0
+                done
+                
+                #####for segments absent add commas
+                if [ $absent -eq 1  ]; then
+                    newline+=",,,,,,"
+                fi 
+
+            done
+            if [ ! $absent -eq 1  ]; then
+                newline=${newline::-1}   #remove extra comma if the last line was a data line
+            fi
+            echo "$newline"          
+
+           
+            ####Grab the READ_COUNTS file, extract read count data, and store it
+            ####   in a dict of key: ( barcodeName SegmentName ), val: readCount
+            while read line; do
+                if [ "${line:0:1}" == "4" ]; then
+                    IFS="	" 
+                    read -r -a lineLst <<< $line 
+                    seg="${lineLst[0]:2:${#lineLst[0]}}"
+                    readCnt=${lineLst[1]}
+                    readCnts["${dir},${seg}"]=$readCnt 
+                fi
+            done < READ_COUNTS.txt
+
+
+            ####Go through readCnts, calculate "all" values for each barcode as
+            ####   well as for all barcodes and store them in a new dict along
+            ####   with all items from the old dict
+            for key in ${!readCnts[@]}; do
+                #####add info from original dict
+                readCnts2[$key]=${readCnts[$key]}
+                
+                #####calculate "all" values and store them in the new dict
+                IFS=',' read -r -a keyLst <<< "$key"
+                barAll="${keyLst[0]},all"
+                total="all,all"
+
+                if [[ $barAll =~ ${readCnts2} ]]; then
+                    (( readCnts2[$barAll] += ${readCnts[$key]} ))
+                else
+                    readCnts2[$barAll]=${readCnts[$key]}
+                fi 
+
+                if [[ $total =~ ${readCnts2} ]]; then
+                    (( readCnts2[$total] += ${readCnts[$key]} ))
+                else
+                    readCnts2[$total]=${readCnts[$key]}
+                fi
+            done
+            
+            cd ../..
+        fi
+        cd ..
+    done >> coverageMeans.csv
+
+    ##Remove readcounts files if necessary
+    if [ -f readCountsDetailed.csv ]; then
+        rm readCountsDetailed.csv
+    fi
+    if [ -f readCountsSummary.csv ]; then
+        rm readCountsSummary.csv
+    fi
+
+    ##Make titles for readCounts files
+    touch readCountsDetailed.csv
+    touch readCountsSummary.csv
+    echo "barcode,segment,readCnt" >> readCountsDetailed.csv
+    echo "barcode,segment,readCnt" >> readCountsSummary.csv
+
+
+    ##Go through readCnts2 and put data into an output fulder
+    for key in ${!readCnts2[@]}; do    
+        ###extract data from readCnts2
+        IFS="," read -r -a keyLst <<< $key
+        barcode=${keyLst[0]}
+        segment=${keyLst[1]}
+        readCnt=${readCnts2[$key]}
+
+        ###write to the outputs
+        if [[ "$barcode" == "all" || "$segment" == "all" ]]; then
+            echo "${barcode},${segment},${readCnt}" >> readCountsSummary.csv
+        else
+            echo "${barcode},${segment},${readCnt}" >> readCountsDetailed.csv
+        fi
+    done
+
+    ##Rearrange the columns in the coverage file to sort by statistic rather than segment
+    ###build awk string based on the number of barcodes
+    awkString="BEGIN {FS=\",\"} ; {print \$1 \",\" "
+    numStats=6
+    numSegs="${#segs[@]}"
+    allStats=$(( numStats * numSegs ))
+    mostStats=$(( allStats - numStats + 1 ))
+    ind=2
+    for ((i=1; i<=$numStats; i++ )); do
+        ind=$(( i + 1 ))
+        awkString+="$"
+        awkString+="$ind \",\" "
+        while [ $ind -le $mostStats ]; do
+            ind=$(( ind + numStats ))
+            awkString+="$"
+            awkString+="$ind \",\" "
+        done
+    done
+    awkString=${awkString::-5}   #remove extra space request
+    awkString+="}"
+
+    echo "$awkString" > awkScript.awk
+    awk -f awkScript.awk coverageMeans.csv > coverageStats.csv
+    
+    ###delete temporary files
+    rm coverageMeans.csv
+    rm awkScript.awk
+
+else
+    echo -e "Skipping QC value calculation \n"
+fi
+
+
+#Creating alignments from assembled sequences
+swCombForClassH1="";swCombForClassH3=""
+FAILED_MAFFT="ERROR: MAFFT alignment failed\n"
+if [ $SKIP_MAFFT -eq 0 ]; then
+    echo -e "Aligning assembled sequences using MAFFT\n"
+    
+    #Remove alignment files from previous mafft runs
+    #outer_fasta_count="$(ls -l *.aln 2>/dev/null | wc -l)"
+    #if (( $outer_fasta_count > 0 )); then
+    #    rm *.aln
+    #fi
+
+    #For each fasta
+    for file in *fasta; do
+        if [[ ! "$file" =~ combined_barcode* ]]; then
+            #For each segment+subtype, gather data from status file
+            seg=$(echo $file | cut -d '.' -f 1)
+            if [ $seg == "A_PB2" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+		    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/1_PB2/status.txt"
+                
+                REF_DIR="${PURDY_DIR}/REFS/1_PB2/"
+            elif [ $seg == "A_PB1" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/2_PB1/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/2_PB1/"
+            elif [ $seg == "A_PA" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/3_PA/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/3_PA/"
+            elif [ $seg == "A_HA_H1" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "swine200" ]; then
+                        swTwoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "swine50" ]; then
+                        swFifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "swineSmall" ]; then
+                        swSmall=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/1_H1/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/1_H1/"
+            elif [ $seg == "A_HA_H2" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/2_H2/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/2_H2/"
+            elif [ $seg == "A_HA_H3" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "swine200" ]; then
+                        swTwoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "swine50" ]; then
+                        swFifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "swineSmall" ]; then
+                        swSmall=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/3_H3/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/3_H3/"
+            elif [ $seg == "A_HA_H4" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/4_H4/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/4_H4/"
+            elif [ $seg == "A_HA_H5" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/5_H5/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/5_H5/"
+            elif [ $seg == "A_HA_H6" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/6_H6/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/6_H6/"
+            elif [ $seg == "A_HA_H7" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/7_H7/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/7_H7/"
+            elif [ $seg == "A_HA_H8" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/8_H8/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/8_H8/"
+            elif [ $seg == "A_HA_H9" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/9_H9/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/9_H9/"
+            elif [ $seg == "A_HA_H10" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/A_H10/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/A_H10/"
+            elif [ $seg == "A_HA_H11" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/B_H11/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/B_H11/"
+            elif [ $seg == "A_HA_H12" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/C_H12/status.txt"
+     
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/C_H12/"
+            elif [ $seg == "A_HA_H13" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/D_H13/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/D_H13/"
+            elif [ $seg == "A_HA_H14" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/E_H14/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/E_H14/"
+            elif [ $seg == "A_HA_H15" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/F_H15/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/F_H15/"
+            elif [ $seg == "A_HA_H16" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/G_H16/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/G_H16/"
+            elif [ $seg == "A_HA_H17" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/H_H17/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/H_H17/"
+            elif [ $seg == "A_HA_H18" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/4_HA/I_H18/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/4_HA/I_H18/"
+            elif [ $seg == "A_NP" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/5_NP/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/5_NP/"
+            elif [ $seg == "A_NA_N1" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/1_N1/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/1_N1/"
+            elif [ $seg == "A_NA_N2" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/2_N2/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/2_N2/"
+            elif [ $seg == "A_NA_N3" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/3_N3/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/3_N3/"
+            elif [ $seg == "A_NA_N4" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/4_N4/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/4_N4/"
+            elif [ $seg == "A_NA_N5" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/5_N5/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/5_N5/"
+            elif [ $seg == "A_NA_N6" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/6_N6/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/6_N6/"
+            elif [ $seg == "A_NA_N7" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/7_N7/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/7_N7/"
+            elif [ $seg == "A_NA_N8" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/8_N8/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/8_N8/"
+            elif [ $seg == "A_NA_N9" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/9_N9/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/9_N9/"
+            elif [ $seg == "A_NA_N10" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/A_N10/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/A_N10/"
+            elif [ $seg == "A_NA_N11" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/6_NA/B_N11/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/6_NA/B_N11/"
+            elif [ $seg == "A_MP" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/7_MP/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/7_MP/"
+            elif [ $seg == "A_NS" ]; then
+                while read line;do
+                    name=$(echo $line | cut -d ' ' -f 1)
+                    if [ $name == "200" ]; then
+                        twoHun=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "50" ]; then
+                        fifty=$(echo $line | cut -d ' ' -f 2)
+                    elif [ $name == "small" ]; then
+                        small=$(echo $line | cut -d ' ' -f 2)
+                    fi
+                done < "${PURDY_DIR}/REFS/8_NS/status.txt"
+
+                REF_DIR="${PURDY_DIR}/REFS/8_NS/"
+            else
+                 echo >&2 "ERROR: PURDY does not seem to have a reference to align with your data"
+                 echo >&2 "${seg} is the segment"
+                 exit 1
+            fi
+
+
+            #Align combined segment+subtype sequences with references 
+            ##align 200 trees
+            if [[ ! "$twoHun" =~ NA ]]; then #refs >=200
+                cat "$file" "${REF_DIR}${twoHun}" > "tmp_${seg}_twoHunComb.fasta"
+                twoHunCombFile="tmp_${seg}_twoHunComb.fasta"
+
+                mafft --quiet --thread "$NTHREADS" "$twoHunCombFile" > "${twoHunCombFile/.fasta/.aln}" || {
+                echo -e >&2 "$FAILED_MAFFT"
+		echo -e >&2"1"
+                exit 1
+                }
+
+                if [[ $seg == "A_HA_H1" || $seg == "A_HA_H3" ]]; then
+                    cat "$file" "${REF_DIR}${swTwoHun}" > "tmp_${seg}_swine_twoHunComb.fasta"
+                    swTwoHunCombFile="tmp_${seg}_swine_twoHunComb.fasta"
+
+                    mafft --quiet --thread "$NTHREADS" "$swTwoHunCombFile" > "${swTwoHunCombFile/.fasta/.aln}" || {
+                    echo -e >&2 "$FAILED_MAFFT"
+		    echo -e >&2 "2"
+                    exit 1
+		    }
+
+                    #capture the combined 200 file for classlog to use downstream
+                    if [[ $seg == "A_HA_H1" ]]; then
+                        #swCombForClassH1="${swTwoHunCombFile/.fasta/.aln}"
+			swCombForClassH1="$swTwoHunCombFile"
+                    elif [[ $seg == "A_HA_H3" ]]; then
+                        #swCombForClassH3="${swTwoHunCombFile/.fasta/.aln}"
+			swCombForClassH3="$swTwoHunCombFile"
+                    fi
+                fi
+
+            else
+                if [[ ! "$fifty" =~ NA ]]; then
+                    if [[ ! "$small" =~ NA ]]; then #50 < refs < 200
+                        treeName_tmp=${twoHunCombFile/.fasta/.tre}
+                        treeName=${treeName_tmp:4}
+                        echo -e "Although less than 200 references were available for ${seg}, more than 50 were available and were used to generate ${treeName} and ${treeName}\n"
+                        cat "$file" "${REF_DIR}${small}" > "tmp_${seg}_twoHunComb.fasta"
+                        twoHunCombFile="tmp_${seg}_twoHunComb.fasta"
+
+                        mafft --quiet --thread "$NTHREADS" "$twoHunCombFile" > "${twoHunCombFile/.fasta/.aln}" || {
+                        echo -e >&2 "$FAILED_MAFFT"
+			echo -e >&2 "3"
+                        exit 1
+                        }
+
+                        if [[ $seg == "A_HA_H1" || $seg == "A_HA_H3" ]]; then
+                            cat "$file" "${REF_DIR}${swTwoHun}" > "tmp_${seg}_swine_twoHunComb.fasta"
+                            swTwoHunCombFile="tmp_${seg}_swine_twoHunComb.fasta"
+
+                            mafft --quiet --thread "$NTHREADS" "$swTwoHunCombFile" > "${swTwoHunCombFile/.fasta/.aln}" || {
+                            echo -e >&2 "$FAILED_MAFFT"
+			    echo -e >&2 "4"
+                            exit 1
+                            }
+
+                            #capture the combined 200 file for classlog to use downstream
+                            if [[ $seg == "A_HA_H1" ]]; then
+                                swCombForClassH1="${swTwoHunCombFile/.fasta/.aln}"
+				#swCombForClassH1="$swTwoHunCombFile"
+                            elif [[ $seg == "A_HA_H3" ]]; then
+				swCombForClassH3="${swTwoHunCombFile/.fasta/.aln}"
+				#swCombForClassH3="$swTwoHunCombFile"
+                            fi 
+                        fi
+
+                    fi
+                else #refs < 50
+                    fiftyCombFile="tmp_${seg}_fiftyComb.fasta"
+                    treeName_tmp=${fiftyCombFile/.fasta/.tre}
+                    treeName=${treeName_tmp:4}
+                    echo -e "Although less than 50 references were available for ${seg}, what was available was used to generate ${treeName} and ${treeName}\n"
+                    fifty=$small
+                fi
+            fi
+
+            ##align 50 trees
+            cat "$file" "${REF_DIR}${fifty}" > "tmp_${seg}_fiftyComb.fasta"
+            fiftyCombFile="tmp_${seg}_fiftyComb.fasta"
+
+            mafft --quiet --thread "$NTHREADS" "$fiftyCombFile" > "${fiftyCombFile/.fasta/.aln}" || {
+            echo -e >&2 "$FAILED_MAFFT"
+            echo -e >&2 "5"
+            exit 1
+            } 
+
+            if [[ $seg == "A_HA_H1" || $seg == "A_HA_H3" ]]; then
+                cat "$file" "${REF_DIR}${swFifty}" > "tmp_${seg}_swine_fiftyComb.fasta"
+                swFiftyCombFile="tmp_${seg}_swine_fiftyComb.fasta"
+
+                mafft --quiet --thread "$NTHREADS" "$swFiftyCombFile" > "${swFiftyCombFile/.fasta/.aln}" || {
+                echo -e >&2 "$FAILED_MAFFT"
+		echo -e >&2 "6"
+                exit 1
+                }
+            fi
+        fi
+    done
+
+else
+    echo -e "Skipping MAFFT alignment\n"
+fi
+
+
+#Generating a phylogenetic tree from assembled sequences and references
+FAILED_FT="ERROR: FastTree maximum likelihood tree construction failed\n"
+if [ $SKIP_MAFFT -eq 0 ]; then
+    echo -e "Building maximum likelihood trees using FastTree\n"
+    for file in tmp_*aln; do
+        notmp="${file:4}"
+
+        FastTree -quiet -nt "$file" > "${notmp/.aln/.tre}" || {
+        echo >&2 "$FAILED_FT"
+        exit 1
+        }
+    done
+
+    #cleanup by removing temporary files
+    for file in tmp_*; do
+        rm $file
+    done
+
+else
+    echo -e "Skipping FastTree maximum likelihood tree construction\n"
+fi
+
+
+#Performing clade prediction
+FAILED_HP="ERROR: Clade prediction failed\n"
+if [ $SKIP_CLADEPRED -eq 0 ]; then
+    ##Collect reference data from files
+    REF_DIR_H1="${PURDY_DIR}/REFS/4_HA/1_H1/"
+    REF_DIR_H3="${PURDY_DIR}/REFS/4_HA/3_H3/"
+
+    while read line;do
+        name=$(echo $line | cut -d ' ' -f 1)
+        if [ $name == "pickle" ]; then
+            swH1Train=$(echo $line | cut -d ' ' -f 2)
+        fi
+    done < "${REF_DIR_H1}/status.txt"
+
+    while read line;do
+        name=$(echo $line | cut -d ' ' -f 1)
+        if [ $name == "pickle" ]; then
+            swH3Train=$(echo $line | cut -d ' ' -f 2)
+        fi          
+    done < "${REF_DIR_H3}/status.txt"
+
+    echo -e "Predicting clade using classLog\n"
+    if [ -f A_HA_H1.fasta ]; then
+        classlog predict "${REF_DIR_H1}${swH1Train}" A_HA_H1.fasta > swineCladePrediction_H1.csv
+        sed -i 's/\t/,/g' swineCladePrediction_H1.csv  #convert from tab delimited to CSV
+    else
+        echo -e "Clade prediction could not be completed for H1 due to a lack of H1 data in your data set\n"
+    fi
+
+    if [ -f A_HA_H3.fasta ]; then
+        classlog predict "${REF_DIR_H3}${swH3Train}" A_HA_H3.fasta > swineCladePrediction_H3.csv
+	sed -i 's/\t/,/g' swineCladePrediction_H3.csv  #convert from tab delimited to CSV
+    else
+        echo -e "Clade prediction could not be completed for H3 due to a lack of H3 data in your data set\n"
+    fi
+
+else
+    echo -e "Skipping clade prediction\n" 
+fi
+
+
+
+echo -e "PURDY is finished!\n"
+
+
+
+
