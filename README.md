@@ -113,7 +113,7 @@ You will also need to add each of these dependencies to your PATH. Guidance on a
 
 ```
 git clone https://github.com/flu-crew/PURDY
-chmod -R +x PURDY/
+chmod -R +x PURDY/Scripts
 ```
 
 This downloads PURDY, the reference sequences required for PURDY to properly perform post-assembly analysis, and some other files. You will then want to add PURDY to your PATH so that it can be accessed from any folder on your machine by either using the "export" UNIX tool or by editing your .bash_profile file. Using the "export" tool is easier and less dangerous, but is also only a one time fix. Anytime you restart your command-line interface you will need to do this again before using PURDY. This is how that is done:
