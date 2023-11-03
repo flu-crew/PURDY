@@ -12,7 +12,11 @@ RUN apt-get install -y python3.9
 RUN apt install -y git mafft python3-pip pigz wget fasttree zlib1g
 RUN curl -L http://xrl.us/installperlnix | bash
 RUN pip3 install --upgrade pip
+ENV PATH="${PATH}:/bin"
 
+#install bc
+RUN apt install -y libc6 libreadline6-dev
+RUN apt install -y bc
 
 #install samtools
 RUN apt install -y libncurses-dev libbz2-dev liblzma-dev
@@ -45,10 +49,8 @@ RUN wget https://cran.r-project.org/src/base/R-4/R-4.2.0.tar.gz && \
   cd ..
 
 
-#Copy over custom variant of IRMA
-#COPY ./irma_tka ./irma_tka
-#RUN chmod -R 777 /irma_tka
-#ENV PATH="${PATH}:/irma_tka"
+#Install most dependencies for IRMA (BLAT and LABEL come with IRMA)
+RUN apt install -y ssw-align minimap2 parallel muscle
 
 #Install IRMA
 RUN wget https://wonder.cdc.gov/amd/flu/irma/flu-amd-202209.zip
@@ -57,9 +59,9 @@ RUN sed -i 's/TMP=\/tmp/TMP="$(pwd)"/g' flu-amd/IRMA_RES/modules/FLU/init.sh
 ENV PATH="${PATH}:/flu-amd"
 
 #install classlog
-RUN pip3 install click scikit-learn numpy pandas 
+RUN pip3 install click scikit-learn==1.3.1 numpy pandas 
 RUN pip3 install pybind11
-RUN pip3 install setuptools wheel scipy #sklearn 
+RUN pip3 install setuptools wheel scipy
 
 RUN git clone https://github.com/flu-crew/classLog.git && \
   cd classLog && \
@@ -70,9 +72,15 @@ RUN git clone https://github.com/flu-crew/classLog.git && \
   pip3 install . && \
   cd ..
 
-#installing PURDY
+#Install Guppy CPU from tar.gz
+RUN wget https://cdn.oxfordnanoportal.com/software/analysis/ont-guppy-cpu_6.5.7_linux64.tar.gz
+RUN tar -xf ont-guppy-cpu_6.5.7_linux64.tar.gz
+ENV PATH="${PATH}:/ont-guppy-cpu/bin/"
+
+#install PURDY
 COPY ./purdy ./purdy
 COPY ./REFS ./REFS
+RUN chmod -R +x purdy
 ENV PATH="${PATH}:/"
 
 #setting up the file to run upon the call "docker run ..."
