@@ -77,11 +77,11 @@ RUN wget https://cdn.oxfordnanoportal.com/software/analysis/ont-guppy-cpu_6.5.7_
 RUN tar -xf ont-guppy-cpu_6.5.7_linux64.tar.gz
 ENV PATH="${PATH}:/ont-guppy-cpu/bin/"
 
-#install PURDY
-COPY ./purdy ./purdy
+#install FluPore
+COPY ./flupore ./flupore
 COPY ./REFS ./REFS
-RUN chmod -R +x purdy
+RUN chmod -R +x flupore
 ENV PATH="${PATH}:/"
 
 #setting up the file to run upon the call "docker run ..."
-ENTRYPOINT ["purdy"]
+ENTRYPOINT ["flupore"]
