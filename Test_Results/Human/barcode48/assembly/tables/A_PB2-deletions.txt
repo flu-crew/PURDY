@@ -1,0 +1,3 @@
+Reference_Name	Upstream_Position	Length	Context	Called	Count	Total	Frequency	PairedUB
+A_PB2	339	1	TCAGA-TAAAA	FALSE	2	3	0.666666666666667	1
+A_PB2	583	1	CTTGT-GGACA	FALSE	2	3	0.666666666666667	1

@@ -1,0 +1,13 @@
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R1.match:15
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R2.match:2
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R3.match:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R1.nomatch:4
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R2.nomatch:2
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R3.nomatch:2
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R1.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R2.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/MATCH/R3.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/R0.fa:19
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/ASSEMBLY/A_HA_H1.fa:5
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/ASSEMBLY/A_MP.fa:9
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode06/david.hufnagel/IRMAv1.0.3/assembly-U1CQVI3dupS0JWDUXUrad6lgf3CuPhBh/ASSEMBLY/A_NS.fa:3

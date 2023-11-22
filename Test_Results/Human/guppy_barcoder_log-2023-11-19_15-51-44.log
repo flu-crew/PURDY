@@ -1,0 +1,175 @@
+2023-11-19 15:51:44.086320 [guppy/info] lamp_arrangements arrangement folder not found: /ont-guppy-cpu/data/barcoding/lamp_arrangements
+2023-11-19 15:51:44.110442 [guppy/message] ONT Guppy barcoding software version 6.5.7+ca6d6af
+input path:         fastq_pass_reformat
+save path:          fullPurdyRunNov18
+min. score front:   60
+min. score rear:    60
+2023-11-19 15:51:44.113528 [guppy/info] crashpad_handler not supported on this platform.
+2023-11-19 15:51:44.122340 [guppy/message] Found 83 input files.
+2023-11-19 15:51:44.123187 [guppy/info] Starting input file fastq_pass_reformat/SRR7701723_1_reformat.fastq
+2023-11-19 15:51:49.657393 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701723_1_reformat.fastq (2804 reads)
+2023-11-19 15:51:49.658324 [guppy/info] Starting input file fastq_pass_reformat/SRR7701740_1_reformat.fastq
+2023-11-19 15:51:58.719438 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701740_1_reformat.fastq (3074 reads)
+2023-11-19 15:51:58.720487 [guppy/info] Starting input file fastq_pass_reformat/SRR7701673_1_reformat.fastq
+2023-11-19 15:52:04.801590 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701673_1_reformat.fastq (2795 reads)
+2023-11-19 15:52:04.801713 [guppy/info] Starting input file fastq_pass_reformat/SRR7701736_1_reformat.fastq
+2023-11-19 15:52:12.243906 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701736_1_reformat.fastq (3000 reads)
+2023-11-19 15:52:12.244891 [guppy/info] Starting input file fastq_pass_reformat/SRR7701708_1_reformat.fastq
+2023-11-19 15:52:20.508653 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701708_1_reformat.fastq (3003 reads)
+2023-11-19 15:52:20.509646 [guppy/info] Starting input file fastq_pass_reformat/SRR7701722_1_reformat.fastq
+2023-11-19 15:52:28.379252 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701722_1_reformat.fastq (3031 reads)
+2023-11-19 15:52:28.379391 [guppy/info] Starting input file fastq_pass_reformat/SRR7701672_1_reformat.fastq
+2023-11-19 15:52:35.502673 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701672_1_reformat.fastq (2852 reads)
+2023-11-19 15:52:35.503488 [guppy/info] Starting input file fastq_pass_reformat/SRR7701741_1_reformat.fastq
+2023-11-19 15:52:43.746146 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701741_1_reformat.fastq (3022 reads)
+2023-11-19 15:52:43.746186 [guppy/info] Starting input file fastq_pass_reformat/SRR7701709_1_reformat.fastq
+2023-11-19 15:52:53.730618 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701709_1_reformat.fastq (2938 reads)
+2023-11-19 15:52:53.731511 [guppy/info] Starting input file fastq_pass_reformat/SRR7701667_1_reformat.fastq
+2023-11-19 15:53:00.667147 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701667_1_reformat.fastq (2527 reads)
+2023-11-19 15:53:00.667782 [guppy/info] Starting input file fastq_pass_reformat/SRR7701737_1_reformat.fastq
+2023-11-19 15:53:08.025306 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701737_1_reformat.fastq (3016 reads)
+2023-11-19 15:53:08.025421 [guppy/info] Starting input file fastq_pass_reformat/SRR7701734_1_reformat.fastq
+2023-11-19 15:53:17.901287 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701734_1_reformat.fastq (2762 reads)
+2023-11-19 15:53:17.901977 [guppy/info] Starting input file fastq_pass_reformat/SRR7701671_1_reformat.fastq
+2023-11-19 15:53:27.237853 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701671_1_reformat.fastq (2836 reads)
+2023-11-19 15:53:27.237886 [guppy/info] Starting input file fastq_pass_reformat/SRR7701689_1_reformat.fastq
+2023-11-19 15:53:35.850223 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701689_1_reformat.fastq (2940 reads)
+2023-11-19 15:53:35.851500 [guppy/info] Starting input file fastq_pass_reformat/SRR7701742_1_reformat.fastq
+2023-11-19 15:53:45.421018 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701742_1_reformat.fastq (3075 reads)
+2023-11-19 15:53:45.422227 [guppy/info] Starting input file fastq_pass_reformat/SRR7701721_1_reformat.fastq
+2023-11-19 15:53:54.556802 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701721_1_reformat.fastq (2957 reads)
+2023-11-19 15:53:54.556865 [guppy/info] Starting input file fastq_pass_reformat/SRR7701735_1_reformat.fastq
+2023-11-19 15:54:06.688678 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701735_1_reformat.fastq (3046 reads)
+2023-11-19 15:54:06.689723 [guppy/info] Starting input file fastq_pass_reformat/SRR7701743_1_reformat.fastq
+2023-11-19 15:54:16.669773 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701743_1_reformat.fastq (3084 reads)
+2023-11-19 15:54:16.669862 [guppy/info] Starting input file fastq_pass_reformat/SRR7701670_1_reformat.fastq
+2023-11-19 15:54:24.111393 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701670_1_reformat.fastq (2807 reads)
+2023-11-19 15:54:24.112122 [guppy/info] Starting input file fastq_pass_reformat/SRR7701688_1_reformat.fastq
+2023-11-19 15:54:32.540161 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701688_1_reformat.fastq (2988 reads)
+2023-11-19 15:54:32.540983 [guppy/info] Starting input file fastq_pass_reformat/SRR7701720_1_reformat.fastq
+2023-11-19 15:54:40.976236 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701720_1_reformat.fastq (3019 reads)
+2023-11-19 15:54:40.976408 [guppy/info] Starting input file fastq_pass_reformat/SRR7701676_1_reformat.fastq
+2023-11-19 15:54:46.837537 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701676_1_reformat.fastq (2838 reads)
+2023-11-19 15:54:46.838733 [guppy/info] Starting input file fastq_pass_reformat/SRR7701745_1_reformat.fastq
+2023-11-19 15:54:53.116670 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701745_1_reformat.fastq (2771 reads)
+2023-11-19 15:54:53.116762 [guppy/info] Starting input file fastq_pass_reformat/SRR7701726_1_reformat.fastq
+2023-11-19 15:55:04.249949 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701726_1_reformat.fastq (2989 reads)
+2023-11-19 15:55:04.250749 [guppy/info] Starting input file fastq_pass_reformat/SRR7701733_1_reformat.fastq
+2023-11-19 15:55:10.200420 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701733_1_reformat.fastq (3020 reads)
+2023-11-19 15:55:10.201496 [guppy/info] Starting input file fastq_pass_reformat/SRR7701750_1_reformat.fastq
+2023-11-19 15:55:17.589429 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701750_1_reformat.fastq (3051 reads)
+2023-11-19 15:55:17.589523 [guppy/info] Starting input file fastq_pass_reformat/SRR7701744_1_reformat.fastq
+2023-11-19 15:55:26.802232 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701744_1_reformat.fastq (3066 reads)
+2023-11-19 15:55:26.803444 [guppy/info] Starting input file fastq_pass_reformat/SRR7701677_1_reformat.fastq
+2023-11-19 15:55:32.494595 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701677_1_reformat.fastq (2923 reads)
+2023-11-19 15:55:32.494713 [guppy/info] Starting input file fastq_pass_reformat/SRR7701727_1_reformat.fastq
+2023-11-19 15:55:38.417733 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701727_1_reformat.fastq (3034 reads)
+2023-11-19 15:55:38.418524 [guppy/info] Starting input file fastq_pass_reformat/SRR7701719_1_reformat.fastq
+2023-11-19 15:55:47.223666 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701719_1_reformat.fastq (3022 reads)
+2023-11-19 15:55:47.224578 [guppy/info] Starting input file fastq_pass_reformat/SRR7701732_1_reformat.fastq
+2023-11-19 15:55:57.037100 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701732_1_reformat.fastq (3018 reads)
+2023-11-19 15:55:57.038454 [guppy/info] Starting input file fastq_pass_reformat/SRR7701751_1_reformat.fastq
+2023-11-19 15:55:58.091782 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701751_1_reformat.fastq (300 reads)
+2023-11-19 15:55:58.092801 [guppy/info] Starting input file fastq_pass_reformat/SRR7701752_1_reformat.fastq
+2023-11-19 15:56:04.889593 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701752_1_reformat.fastq (2820 reads)
+2023-11-19 15:56:04.890795 [guppy/info] Starting input file fastq_pass_reformat/SRR7701699_1_reformat.fastq
+2023-11-19 15:56:14.238657 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701699_1_reformat.fastq (2921 reads)
+2023-11-19 15:56:14.239624 [guppy/info] Starting input file fastq_pass_reformat/SRR7701731_1_reformat.fastq
+2023-11-19 15:56:20.411885 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701731_1_reformat.fastq (3035 reads)
+2023-11-19 15:56:20.412959 [guppy/info] Starting input file fastq_pass_reformat/SRR7701724_1_reformat.fastq
+2023-11-19 15:56:28.609649 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701724_1_reformat.fastq (3006 reads)
+2023-11-19 15:56:28.611280 [guppy/info] Starting input file fastq_pass_reformat/SRR7701747_1_reformat.fastq
+2023-11-19 15:56:36.211342 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701747_1_reformat.fastq (3059 reads)
+2023-11-19 15:56:36.212296 [guppy/info] Starting input file fastq_pass_reformat/SRR7701674_1_reformat.fastq
+2023-11-19 15:56:42.633431 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701674_1_reformat.fastq (2881 reads)
+2023-11-19 15:56:42.635236 [guppy/info] Starting input file fastq_pass_reformat/SRR7701698_1_reformat.fastq
+2023-11-19 15:56:48.902102 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701698_1_reformat.fastq (2913 reads)
+2023-11-19 15:56:48.903166 [guppy/info] Starting input file fastq_pass_reformat/SRR7701730_1_reformat.fastq
+2023-11-19 15:56:57.484633 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701730_1_reformat.fastq (3052 reads)
+2023-11-19 15:56:57.485667 [guppy/info] Starting input file fastq_pass_reformat/SRR7701725_1_reformat.fastq
+2023-11-19 15:57:05.066468 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701725_1_reformat.fastq (3021 reads)
+2023-11-19 15:57:05.066554 [guppy/info] Starting input file fastq_pass_reformat/SRR7701675_1_reformat.fastq
+2023-11-19 15:57:11.334444 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701675_1_reformat.fastq (2849 reads)
+2023-11-19 15:57:11.335519 [guppy/info] Starting input file fastq_pass_reformat/SRR7701746_1_reformat.fastq
+2023-11-19 15:57:17.439053 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701746_1_reformat.fastq (2964 reads)
+2023-11-19 15:57:17.439141 [guppy/info] Starting input file fastq_pass_reformat/SRR7701681_1_reformat.fastq
+2023-11-19 15:57:27.017440 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701681_1_reformat.fastq (2910 reads)
+2023-11-19 15:57:27.018299 [guppy/info] Starting input file fastq_pass_reformat/SRR7701679_1_reformat.fastq
+2023-11-19 15:57:32.565314 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701679_1_reformat.fastq (2651 reads)
+2023-11-19 15:57:32.566314 [guppy/info] Starting input file fastq_pass_reformat/SRR7701729_1_reformat.fastq
+2023-11-19 15:57:41.511124 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701729_1_reformat.fastq (3084 reads)
+2023-11-19 15:57:41.511248 [guppy/info] Starting input file fastq_pass_reformat/SRR7701717_1_reformat.fastq
+2023-11-19 15:57:48.982112 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701717_1_reformat.fastq (2943 reads)
+2023-11-19 15:57:48.982994 [guppy/info] Starting input file fastq_pass_reformat/SRR7701702_1_reformat.fastq
+2023-11-19 15:58:03.299563 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701702_1_reformat.fastq (2886 reads)
+2023-11-19 15:58:03.300385 [guppy/info] Starting input file fastq_pass_reformat/SRR7701694_1_reformat.fastq
+2023-11-19 15:58:13.075530 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701694_1_reformat.fastq (2940 reads)
+2023-11-19 15:58:13.076762 [guppy/info] Starting input file fastq_pass_reformat/SRR7701716_1_reformat.fastq
+2023-11-19 15:58:19.934842 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701716_1_reformat.fastq (2976 reads)
+2023-11-19 15:58:19.936724 [guppy/info] Starting input file fastq_pass_reformat/SRR7701680_1_reformat.fastq
+2023-11-19 15:58:28.557064 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701680_1_reformat.fastq (2884 reads)
+2023-11-19 15:58:28.558321 [guppy/info] Starting input file fastq_pass_reformat/SRR7701678_1_reformat.fastq
+2023-11-19 15:58:39.031884 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701678_1_reformat.fastq (2894 reads)
+2023-11-19 15:58:39.032667 [guppy/info] Starting input file fastq_pass_reformat/SRR7701728_1_reformat.fastq
+2023-11-19 15:58:51.387196 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701728_1_reformat.fastq (3045 reads)
+2023-11-19 15:58:51.387348 [guppy/info] Starting input file fastq_pass_reformat/SRR7701695_1_reformat.fastq
+2023-11-19 15:59:03.303945 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701695_1_reformat.fastq (2933 reads)
+2023-11-19 15:59:03.304589 [guppy/info] Starting input file fastq_pass_reformat/SRR7701703_1_reformat.fastq
+2023-11-19 15:59:11.561098 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701703_1_reformat.fastq (3031 reads)
+2023-11-19 15:59:11.561966 [guppy/info] Starting input file fastq_pass_reformat/SRR7701696_1_reformat.fastq
+2023-11-19 15:59:18.554221 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701696_1_reformat.fastq (2932 reads)
+2023-11-19 15:59:18.554334 [guppy/info] Starting input file fastq_pass_reformat/SRR7701748_1_reformat.fastq
+2023-11-19 15:59:26.483832 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701748_1_reformat.fastq (2994 reads)
+2023-11-19 15:59:26.485053 [guppy/info] Starting input file fastq_pass_reformat/SRR7701683_1_reformat.fastq
+2023-11-19 15:59:35.801887 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701683_1_reformat.fastq (2988 reads)
+2023-11-19 15:59:35.801978 [guppy/info] Starting input file fastq_pass_reformat/SRR7701715_1_reformat.fastq
+2023-11-19 15:59:46.736825 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701715_1_reformat.fastq (2974 reads)
+2023-11-19 15:59:46.737585 [guppy/info] Starting input file fastq_pass_reformat/SRR7701697_1_reformat.fastq
+2023-11-19 15:59:53.155455 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701697_1_reformat.fastq (3000 reads)
+2023-11-19 15:59:53.157478 [guppy/info] Starting input file fastq_pass_reformat/SRR7701714_1_reformat.fastq
+2023-11-19 15:59:58.960636 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701714_1_reformat.fastq (2976 reads)
+2023-11-19 15:59:58.962132 [guppy/info] Starting input file fastq_pass_reformat/SRR7701682_1_reformat.fastq
+2023-11-19 16:00:07.191172 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701682_1_reformat.fastq (2947 reads)
+2023-11-19 16:00:07.192210 [guppy/info] Starting input file fastq_pass_reformat/SRR7701749_1_reformat.fastq
+2023-11-19 16:00:22.299354 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701749_1_reformat.fastq (3046 reads)
+2023-11-19 16:00:22.300886 [guppy/info] Starting input file fastq_pass_reformat/SRR7701684_1_reformat.fastq
+2023-11-19 16:00:31.436592 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701684_1_reformat.fastq (2958 reads)
+2023-11-19 16:00:31.437379 [guppy/info] Starting input file fastq_pass_reformat/SRR7701712_1_reformat.fastq
+2023-11-19 16:00:39.590527 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701712_1_reformat.fastq (2803 reads)
+2023-11-19 16:00:39.591210 [guppy/info] Starting input file fastq_pass_reformat/SRR7701707_1_reformat.fastq
+2023-11-19 16:00:50.310852 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701707_1_reformat.fastq (3026 reads)
+2023-11-19 16:00:50.310941 [guppy/info] Starting input file fastq_pass_reformat/SRR7701669_1_reformat.fastq
+2023-11-19 16:00:59.999091 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701669_1_reformat.fastq (2799 reads)
+2023-11-19 16:00:59.999833 [guppy/info] Starting input file fastq_pass_reformat/SRR7701691_1_reformat.fastq
+2023-11-19 16:01:06.750360 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701691_1_reformat.fastq (2954 reads)
+2023-11-19 16:01:06.750452 [guppy/info] Starting input file fastq_pass_reformat/SRR7701739_1_reformat.fastq
+2023-11-19 16:01:15.321471 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701739_1_reformat.fastq (3099 reads)
+2023-11-19 16:01:15.322348 [guppy/info] Starting input file fastq_pass_reformat/SRR7701713_1_reformat.fastq
+2023-11-19 16:01:22.235685 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701713_1_reformat.fastq (2908 reads)
+2023-11-19 16:01:22.236942 [guppy/info] Starting input file fastq_pass_reformat/SRR7701685_1_reformat.fastq
+2023-11-19 16:01:33.092218 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701685_1_reformat.fastq (2985 reads)
+2023-11-19 16:01:33.092270 [guppy/info] Starting input file fastq_pass_reformat/SRR7701668_1_reformat.fastq
+2023-11-19 16:01:39.906927 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701668_1_reformat.fastq (2638 reads)
+2023-11-19 16:01:39.907574 [guppy/info] Starting input file fastq_pass_reformat/SRR7701690_1_reformat.fastq
+2023-11-19 16:01:48.424109 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701690_1_reformat.fastq (2684 reads)
+2023-11-19 16:01:48.424151 [guppy/info] Starting input file fastq_pass_reformat/SRR7701738_1_reformat.fastq
+2023-11-19 16:01:55.858644 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701738_1_reformat.fastq (3015 reads)
+2023-11-19 16:01:55.859488 [guppy/info] Starting input file fastq_pass_reformat/SRR7701706_1_reformat.fastq
+2023-11-19 16:02:07.061230 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701706_1_reformat.fastq (2965 reads)
+2023-11-19 16:02:07.062246 [guppy/info] Starting input file fastq_pass_reformat/SRR7701705_1_reformat.fastq
+2023-11-19 16:02:14.349608 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701705_1_reformat.fastq (2989 reads)
+2023-11-19 16:02:14.349700 [guppy/info] Starting input file fastq_pass_reformat/SRR7701693_1_reformat.fastq
+2023-11-19 16:02:24.397292 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701693_1_reformat.fastq (2974 reads)
+2023-11-19 16:02:24.398140 [guppy/info] Starting input file fastq_pass_reformat/SRR7701686_1_reformat.fastq
+2023-11-19 16:02:31.249173 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701686_1_reformat.fastq (2984 reads)
+2023-11-19 16:02:31.249284 [guppy/info] Starting input file fastq_pass_reformat/SRR7701710_1_reformat.fastq
+2023-11-19 16:02:38.020863 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701710_1_reformat.fastq (2990 reads)
+2023-11-19 16:02:38.021675 [guppy/info] Starting input file fastq_pass_reformat/SRR7701692_1_reformat.fastq
+2023-11-19 16:02:46.394800 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701692_1_reformat.fastq (2962 reads)
+2023-11-19 16:02:46.396047 [guppy/info] Starting input file fastq_pass_reformat/SRR7701704_1_reformat.fastq
+2023-11-19 16:02:56.291302 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701704_1_reformat.fastq (3061 reads)
+2023-11-19 16:02:56.291364 [guppy/info] Starting input file fastq_pass_reformat/SRR7701711_1_reformat.fastq
+2023-11-19 16:03:08.472295 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701711_1_reformat.fastq (2944 reads)
+2023-11-19 16:03:08.473084 [guppy/info] Starting input file fastq_pass_reformat/SRR7701687_1_reformat.fastq
+2023-11-19 16:03:18.092291 [guppy/info] Successfully finished input file fastq_pass_reformat/SRR7701687_1_reformat.fastq (2950 reads)
+2023-11-19 16:03:18.093507 [guppy/message] Done in 693984 ms.

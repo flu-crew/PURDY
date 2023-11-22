@@ -1,0 +1,8 @@
+Gene	Read Patterns	Read Count
+A_MP	2	2
+A_HA_H1	2	2
+A_NP	2	2
+A_PA	2	2
+A_NA_N1	1	1
+A_NS	1	1
+A_PB1	1	1

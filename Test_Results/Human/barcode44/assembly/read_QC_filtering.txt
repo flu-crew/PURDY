@@ -1,0 +1,2 @@
+Interleaved sample	Starting reads	QC'd reads	Quality threshold	Min length	Use median
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode44/david.hufnagel/IRMAv1.0.3/assembly-pYvx9vMSQHwaC28AeYX2q4P6Zkda3ljN/QC_log.txt:1	3	3	0	150	1

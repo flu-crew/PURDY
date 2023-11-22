@@ -1,0 +1,6 @@
+A_NA_N1	20	20
+A_MP	6	6
+A_NP	3	3
+A_PB1	1	1
+A_HA_H1	1	1
+A_PB2	1	1

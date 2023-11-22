@@ -1,0 +1,2 @@
+Reference_Name	Upstream_Position	Length	Context	Called	Count	Total	Frequency	PairedUB
+A_PB1	153	2	GGGAA--GGACA	FALSE	2	3	0.666666666666667	1

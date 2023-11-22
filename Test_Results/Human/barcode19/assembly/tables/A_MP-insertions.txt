@@ -1,0 +1,4 @@
+Reference_Name	Upstream_Position	Insert	Context	Called	Count	Total	Frequency	Average_Quality	ConfidenceNotMacErr	PairedUB	QualityUB
+A_MP	42	C	atcatCcccgt	FALSE	2	5	0.4	8	0.603776701884722	0.812557257460332	0.717610125607581	
+A_MP	124	T	tcatgTgaatg	FALSE	2	5	0.4	7	0.50118442125778	0.812557257460332	0.69343016593967	
+A_MP	340	A	tcactAaagct	FALSE	2	3	0.666666666666667	7	0.700710652754668	1	1	

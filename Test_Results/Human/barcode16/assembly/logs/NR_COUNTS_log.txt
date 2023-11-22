@@ -1,0 +1,12 @@
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R1.match:9
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R2.match:1
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R3.match:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R1.nomatch:7
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R2.nomatch:6
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R3.nomatch:6
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R1.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R2.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/MATCH/R3.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/R0.fa:16
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/ASSEMBLY/A_HA_H1.fa:4
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode16/david.hufnagel/IRMAv1.0.3/assembly-exrhUU7imMLr62PGCiClBZ81xYO67wy7/ASSEMBLY/A_NS.fa:4

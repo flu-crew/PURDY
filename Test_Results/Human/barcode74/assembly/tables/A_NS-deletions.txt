@@ -1,0 +1,3 @@
+Reference_Name	Upstream_Position	Length	Context	Called	Count	Total	Frequency	PairedUB
+A_NS	219	1	AGCGA-ACACT	FALSE	2	3	0.666666666666667	1
+A_NS	383	1	GTACT-GGAGC	FALSE	2	3	0.666666666666667	1

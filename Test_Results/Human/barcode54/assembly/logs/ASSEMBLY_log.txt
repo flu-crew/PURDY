@@ -1,0 +1,11 @@
+Total Score	Alignment
+8266	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F1-A_MP.sam
+8287	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F2-A_MP.sam
+8302	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F3-A_MP.sam
+8307	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F4-A_MP.sam
+8310	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F5-A_MP.sam
+2273	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F1-A_NS.sam
+2359	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F2-A_NS.sam
+2363	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F3-A_NS.sam
+2369	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F4-A_NS.sam
+2373	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode54/david.hufnagel/IRMAv1.0.3/assembly-aeUvjBleyCjL3IYMA661bm8pUpG8TyTZ/ASSEMBLY/F5-A_NS.sam

@@ -1,0 +1,2 @@
+Reference_Name	Upstream_Position	Length	Context	Called	Count	Total	Frequency	PairedUB
+A_MP	93	2	TGCAG--GAAAA	FALSE	2	3	0.666666666666667	1

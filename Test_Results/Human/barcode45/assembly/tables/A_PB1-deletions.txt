@@ -1,0 +1,2 @@
+Reference_Name	Upstream_Position	Length	Context	Called	Count	Total	Frequency	PairedUB
+A_PB1	42	1	GCACA-AATGC	FALSE	2	4	0.5	0.970876366868069

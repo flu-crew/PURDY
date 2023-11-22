@@ -1,0 +1,2 @@
+Gene	Read Patterns	Read Count
+A_NA_N1	1	1

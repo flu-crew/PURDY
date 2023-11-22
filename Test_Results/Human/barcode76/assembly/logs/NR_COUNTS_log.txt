@@ -1,0 +1,12 @@
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R1.match:15
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R2.match:1
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R3.match:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R1.nomatch:4
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R2.nomatch:3
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R3.nomatch:3
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R1.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R2.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/MATCH/R3.chim:0
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/R0.fa:19
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/ASSEMBLY/A_MP.fa:11
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode76/david.hufnagel/IRMAv1.0.3/assembly-LNq6niOkOUIhUvrubG07cAhaTOXEthhm/ASSEMBLY/A_NA_N1.fa:3

@@ -1,0 +1,6 @@
+A_HA_H1	8	8
+A_NA_N1	7	7
+A_MP	6	6
+A_PA	5	5
+A_NP	2	2
+A_PB2	1	1

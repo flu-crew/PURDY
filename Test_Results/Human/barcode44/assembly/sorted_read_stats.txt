@@ -1,0 +1,2 @@
+Gene	Read Patterns	Read Count
+A_NS	2	2

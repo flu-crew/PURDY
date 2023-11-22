@@ -1,0 +1,2 @@
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode65/david.hufnagel/IRMAv1.0.3/assembly-ee9H4gH03nMGgJRccJJuAMGwkrOYcEVt/A_MP.bam:6
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode65/david.hufnagel/IRMAv1.0.3/assembly-ee9H4gH03nMGgJRccJJuAMGwkrOYcEVt/A_PB1.bam:4

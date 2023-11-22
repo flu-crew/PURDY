@@ -1,0 +1,3 @@
+Reference_Name	Upstream_Position	Length	Context	Called	Count	Total	Frequency	PairedUB
+A_PA	22	1	AAATG-TCGTC	FALSE	2	3	0.666666666666667	1
+A_PA	138	1	TTCCA-TTCAT	FALSE	2	3	0.666666666666667	1

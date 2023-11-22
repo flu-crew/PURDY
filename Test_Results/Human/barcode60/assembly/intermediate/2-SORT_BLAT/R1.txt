@@ -1,0 +1,5 @@
+A_NP	6	6
+A_MP	6	6
+A_NS	2	2
+A_NA_N1	2	2
+A_PB2	1	1

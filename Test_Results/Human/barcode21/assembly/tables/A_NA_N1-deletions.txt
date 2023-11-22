@@ -1,0 +1,3 @@
+Reference_Name	Upstream_Position	Length	Context	Called	Count	Total	Frequency	PairedUB
+A_NA_N1	6	1	TAAAT-CAAAC	FALSE	2	4	0.5	0.970876366868069
+A_NA_N1	83	2	GAAAC--AATCT	FALSE	2	5	0.4	0.812557257460332

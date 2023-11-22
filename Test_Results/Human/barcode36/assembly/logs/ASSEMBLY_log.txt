@@ -1,0 +1,6 @@
+Total Score	Alignment
+3997	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode36/david.hufnagel/IRMAv1.0.3/assembly-rYzHsbYxuxdHnyMikaJyyjpfNpsyYmzO/ASSEMBLY/F1-A_MP.sam
+4057	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode36/david.hufnagel/IRMAv1.0.3/assembly-rYzHsbYxuxdHnyMikaJyyjpfNpsyYmzO/ASSEMBLY/F2-A_MP.sam
+4076	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode36/david.hufnagel/IRMAv1.0.3/assembly-rYzHsbYxuxdHnyMikaJyyjpfNpsyYmzO/ASSEMBLY/F3-A_MP.sam
+4086	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode36/david.hufnagel/IRMAv1.0.3/assembly-rYzHsbYxuxdHnyMikaJyyjpfNpsyYmzO/ASSEMBLY/F4-A_MP.sam
+4094	/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode36/david.hufnagel/IRMAv1.0.3/assembly-rYzHsbYxuxdHnyMikaJyyjpfNpsyYmzO/ASSEMBLY/F5-A_MP.sam

@@ -1,0 +1,4 @@
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode31/david.hufnagel/IRMAv1.0.3/assembly-ZW0LtJ0bvNQRA9467gwijdQOcXj7KH5X/A_HA_H1.bam:8
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode31/david.hufnagel/IRMAv1.0.3/assembly-ZW0LtJ0bvNQRA9467gwijdQOcXj7KH5X/A_MP.bam:6
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode31/david.hufnagel/IRMAv1.0.3/assembly-ZW0LtJ0bvNQRA9467gwijdQOcXj7KH5X/A_NA_N1.bam:7
+/project/nadc_iav/david.hufnagel/4_Purdy/TestingW14Sam/fullPurdyRunNov18/barcode31/david.hufnagel/IRMAv1.0.3/assembly-ZW0LtJ0bvNQRA9467gwijdQOcXj7KH5X/A_PA.bam:5
