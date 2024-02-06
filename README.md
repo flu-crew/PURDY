@@ -1,7 +1,7 @@
 # Introduction
 Welcome to the GitHub repository and manual for the software FluPore! FluPore is a fast and easy-to-use bash pipeline for Oxford Nanopore Technologies (ONT) Influenza A sequences from any host and all gene segments that utilizes existing tools to perform demultiplexing and assembly, collect and calculate basic assembly statistics, generate phylogenetic trees alongside reference sequences, and classify swine HA sequences. 
 
-A manuscript describing the software and is our recommended first step before using FluPore.
+A manuscript describing the software is in preparation.
 
 # How to Run FluPore
 FluPore is a bash script that relies on a great number of dependencies. For your convenience we have built a docker image which provides an isolated filesystem containing all required dependencies. We recommend that you take advantage of this by either using Docker directly or using Docker indirectly via Apptainer (most recommended; formerly Singularity).
