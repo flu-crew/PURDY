@@ -1,20 +1,20 @@
-# Introduction
-Welcome to the GitHub repository and manual for the software FluPore! FluPore is a fast and easy-to-use bash pipeline for Oxford Nanopore Technologies (ONT) Influenza A sequences from any host and all gene segments that utilizes existing tools to perform demultiplexing and assembly, collect and calculate basic assembly statistics, generate phylogenetic trees alongside reference sequences, and classify swine HA sequences. 
+# FluPore: a pipeline for demultiplexing, assembly, and classification of influenza A viruses
+Welcome to the GitHub repository and manual for the software FluPore! FluPore is a fast and easy-to-use bash pipeline for Oxford Nanopore Technologies (ONT) influenza A sequences from any host and all gene segments that uses existing tools to perform demultiplexing and assembly, collect and calculate basic assembly statistics, generate phylogenetic trees alongside reference sequences, and classify swine HA sequences. 
 
 A manuscript describing the software is in preparation.
 
 # How to Run FluPore
-FluPore is a bash script that relies on a great number of dependencies. For your convenience we have built a docker image which provides an isolated filesystem containing all required dependencies. We recommend that you take advantage of this by either using Docker directly or using Docker indirectly via Apptainer (most recommended; formerly Singularity).
+FluPore is a bash script that has dependencies. For your convenience we have built a docker image which provides an isolated filesystem containing all required dependencies. We recommend that you take advantage of this by either using Docker directly or using Docker indirectly via Apptainer (most recommended; formerly Singularity).
 
 ## 1) Download the Test Data Set
-In our manuscript we used three reference data sets to demonstrate the capabilities of FluPore. We recommend using the swine host data set as a first run of FluPore to ensure that it is properly working for you. Note that multiple runs of FluPore on the same data will not yield identical results, but should yield very similar results where real data is involved, as opposed to "junk" where sequencing failed for any reason. The best way to check if your run was successful is to check the output to see if FluPore claims each segment ran successfully (it will tell you directly if something failed) and to compare your phylogenetic tree to the one in the "Test Results" section of this repository. Avian and Human data are also provided in the "Test Results" folder in support of the FluPore manuscript. If you wish, you can skip this step and jump to step 2, "Install Dependencies and Run FluPore" and run FluPore first on your data.
+We used three reference data sets to demonstrate the capabilities of FluPore. We recommend using the swine host data set as a first run of FluPore to ensure that it is properly working. Note that multiple runs of FluPore on the same data will not yield identical results, but should yield very similar results where real data is involved, as opposed to "junk" where sequencing failed for any reason. The best way to check if your run was successful is to check the output to see if FluPore claims each segment ran successfully (it will tell you directly if something failed) and to compare your phylogenetic tree to the one in the "Test Results" section of this repository. Avian and Human data are also provided in the "Test Results" folder in support of the FluPore manuscript. If you wish, you can skip this step and jump to step 2, "Install Dependencies and Run FluPore" and run FluPore first on your data.
 
 This influenza A H1N1, H1N2, and H3N2 data set was collected from swine hosts in Rambo-Martin et al. 2020 (https://journals.asm.org/doi/full/10.1128/msphere.00822-19). This data has been demultiplexed and basecalled and can be found on NCBI under BioProject PRJNA528211 (https://www.ncbi.nlm.nih.gov/sra?linkname=bioproject_sra_all&from_uid=528211). Search for the Bioproject then look for the link to the 13 SRA experiments if the provided link doesn't work. Here the true data is in barcodes 1,5,6,and 14-23. 
 
 ## 2) Install Dependencies and Run FluPore
 This section will guide you through how to acquire FluPore, install FluPore's dependencies, and do a basic run with either a test data set or your data set. FluPore is written in bash and does not need to be installed or complied. See the next section to explore available arguments.
 
-### Using Apptainer (most recommended, formerly Singularity)
+### Using Apptainer (recommended)
 Without going into details Apptainer is a more secure method of running containers on an HPC system and you can learn more about it here: https://apptainer.org/docs/user/main/index.html
 In this case we will be using Apptainer to run a Docker container. Docker is a container system that allows you to run FluPore in an environment we created that already contains all the dependencies you need. For more information about Docker check out their website: https://www.docker.com/
 You may need to download Apptainer to use it. You will find installation istructions here: https://github.com/apptainer/apptainer/blob/main/INSTALL.md
@@ -78,7 +78,7 @@ docker run -v "$(pwd)/fastq_pass":"/fastq_pass" -v "$(pwd)/testRunOct19":"/testR
 In this case "-t 6" tells FluPore to use 6 threads and "-o fullFluPoreRunOct19" tells FluPore to put the results in a folder called "fullFluPoreRunOct19".
 
 ### Installing all Dependencies individually (not recommended)
-While it is possible to install all of FluPore's dependencies without the docker image it is not recommended. The total number of dependencies is great and there are sometimes conflicts between versions of software which can be hard to predict.  If you choose to take this route despite this warning here are the dependencies you will need to install (some of which have their own dependencies):
+While it is possible to install all of FluPore's dependencies without the docker image it is not recommended. The total number of dependencies is unfortunately quite extensive and there are sometimes conflicts between versions of software which can be hard to predict.  If you choose to take this route despite this warning here are the dependencies you will need to install (some of which have their own dependencies):
 
 Guppy - https://help.nanoporetech.com/en/collections/3738249-guppy
 
